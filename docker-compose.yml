@@ -6,6 +6,23 @@ services:
         dockerfile: Dockerfile-alpine
         context: ./../alpine
     image: frickeldave/alpine:latest
+  coredns:
+    build: 
+        dockerfile: Dockerfile-coredns
+        context: ./../coredns
+    image: frickeldave/coredns:latest
+    restart: always
+    ports:
+     - "53:53/udp"
+    volumes:
+      - coredns-data:/home/appuser/data
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "dig", "frickeldave.global"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
   nginx:
     build: 
         dockerfile: Dockerfile-nginx
@@ -17,12 +34,19 @@ services:
     volumes:
       - nginx-data:/home/appuser/data
     networks:
-      - default-net
+      - default
     healthcheck:
       test: "curl --fail https://localhost:8443 --insecure || false"
       interval: 5s
       timeout: 10s
       retries: 3
+    environment:
+      - CRT_VALIDITY=3650
+      - CRT_C=DE
+      - CRT_S=BAVARIAN
+      - CRT_L=HOERGERTSHAUSEN
+      - CRT_OU=FRICKELDAVE
+      - CRT_CN=PROXY.GLOBAL
   mariadb:
     build: 
       dockerfile: Dockerfile-mariadb
@@ -34,7 +58,7 @@ services:
     volumes:
       - mariadb-data:/home/appuser/data
     networks:
-      - default-net
+      - default
     healthcheck:
       test: "mysqladmin status -h 127.0.0.1 -u healthstatus -pfrickeldave2go"
       interval: 5s
@@ -49,21 +73,51 @@ services:
       - MDB_HEALTHPWD=frickeldave2go
       - MDB_COLLATION=utf8_unicode_ci
       - MDB_CHARACTERSET=utf8
-  # go:
-  #   build: 
-  #       dockerfile: Dockerfile-go
-  #       context: ./../go
-  #   image: frickeldave/go:latest
-  # godev:
-  #   build: 
-  #       dockerfile: Dockerfile-godev
-  #       context: ./../godev
-  #   image: frickeldave/godev:latest
-  #   networks:
-  #     - default-net
+  go:
+    build: 
+        dockerfile: Dockerfile-go
+        context: ./../go
+    image: frickeldave/go:latest
+  vault:
+    build: 
+      dockerfile: Dockerfile-vault
+      context: ./../vault
+    image: frickeldave/vault:latest
+    restart: always
+    ports:
+      - "7443:7443"
+    volumes:
+      - vault-data:/home/appuser/data
+    networks:
+      - default
+    healthcheck:
+      test: "curl --fail https://localhost:7443 --insecure || false"
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - VLT_MYSQLADMINUSER=adminmdb
+      - VLT_MYSQLADMINPASSWORD=frickeldave2go
+      - VLT_MYSQLHOST=mariadb
+      - VLT_MYSQLPORT=3306
+      - VLT_MYSQLDB=vault
+      - VLT_MYSQLUSERNAME=vault
+      - VLT_MYSQLPASSWORD=vault2go
+      - VLT_MYSQLHEALTHUSER=frickeldave2go
+      - VLT_MYSQLHEALTHPWD=frickeldave2go
+      - VLT_IPADDRESS=0.0.0.0
+      - VLT_PORT=7443
+      - CRT_VALIDITY=3650
+      - CRT_C=DE
+      - CRT_S=BAVARIAN
+      - CRT_L=HOERGERTSHAUSEN
+      - CRT_OU=FRICKELDAVE
+      - CRT_CN=VAULT.GLOBAL
 volumes:
   mariadb-data:
   nginx-data:
+  vault-data:
+  coredns-data:
 networks:
-  default-net:
+  net:
     driver: bridge
