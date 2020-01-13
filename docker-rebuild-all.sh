@@ -3,7 +3,9 @@
 DR_CLEAN="false"
 DR_PRUNE="false"
 DR_PROJECT="frickeldave"
-declare -a arr=('alpine' 'go' 'coredns' 'mariadb' 'nginx' 'vault');
+#declare -a arr=('alpine' 'go' 'coredns' 'mariadb' 'nginx' 'vault');
+declare -A arr=( ['alpine']='a' ['go']='go' ['coredns']='cd' ['mariadb']='mdb' ['nginx']='ngx' ['vault']='vlt' ['gitea']='git');
+
 
 function docker_remove() { 
 
@@ -26,6 +28,8 @@ function docker_remove() {
 		echo "      Delete existing volume ""$container_name"""
 		if [ "$(docker volume ls -f name=${project_name}_${container_name}-data -q)" ]; then echo "         ...Volume exist, delete..."; docker volume rm ${project_name}_${container_name}-data > /dev/null; else echo "         ...Volume does not exist"; fi
 	fi
+
+	set_alias $project_name $container_name
 }
 
 function parse_input() {
@@ -36,6 +40,8 @@ function parse_input() {
     do
         local DR_PARAM=$(echo $1 | awk -F= '{print $1}')
         local DR_VALUE=$(echo $1 | awk -F= '{print $2}')
+
+		
 
         case $DR_PARAM in
             --prune)
@@ -66,7 +72,7 @@ function docker_remove_all() {
 	
 	echo "Remove all container"
 
-	for i in "${arr[@]}"
+	for i in "${!arr[@]}"
 	do 
 		docker_remove $DR_PROJECT $i 
 	done
@@ -77,12 +83,23 @@ function docker_prune() {
 	docker system prune -f -a
 }
 
+function set_alias() {
+	
+	local project_name="$1"
+	local container_name="$2"
+	local container_short_name=${arr[$container_name]}
+	echo "Create alias ""de$container_short_name=""docker exec -it ${project_name}_${container_name}_1 sh"""""
+	alias de${container_short_name}='''docker exec -it '${project_name}'_'${container_name}'_1 sh'''
+	alias dl$container_short_name='''docker logs '${project_name}'_'${container_name}'_1'''
+}
+
 function main() {
     
     parse_input $@
 
 	if [ "$DR_CONTAINER" == "" ]; then docker_remove_all; fi
 	if [ "$DR_CONTAINER" == "" ] && [ $DR_PRUNE == "true" ]; then docker_remove_all; docker_prune; fi
+	if [ "$DR_CONTAINER" != "" ]; then docker_remove $DR_PROJECT $DR_CONTAINER; fi
 
 }
 main $@
