@@ -1,11 +1,9 @@
 #!/bin/bash
 
 DR_CLEAN="false"
-DR_PRUNE="false"
 DR_PROJECT="frickeldave"
-
-declare -A arr=( ['alpine']='a' ['go']='go' ['coredns']='cd' ['mariadb']='mdb' ['nginx']='ngx' ['vault']='vlt' ['gitea']='git');
-
+DR_SET_ALIAS="true"
+DR_CONTAINER=""
 
 function docker_remove() { 
 
@@ -23,42 +21,33 @@ function docker_remove() {
 	echo "      Delete existing image ""$container_name"""
 	if [ "$(docker images ${project_name}/${container_name} -q)" ]; then echo "         ...Image exist, delete..."; docker rmi ${project_name}/${container_name} -f > /dev/null; else echo "         ...Image does not exist"; fi
 
-	if [ "$DR_CLEAN" == "true" ] || [ "$DR_PRUNE" == "true" ]
-	then
-		echo "      Delete existing volume ""$container_name"""
-		if [ "$(docker volume ls -f name=${project_name}_${container_name}-data -q)" ]; then echo "         ...Volume exist, delete..."; docker volume rm ${project_name}_${container_name}-data > /dev/null; else echo "         ...Volume does not exist"; fi
-	fi
-
-	set_alias $project_name $container_name
+	echo "      Delete existing volume ""$container_name"""
+	if [ "$(docker volume ls -f name=${project_name}_${container_name}-data -q)" ]; then echo "         ...Volume exist, delete..."; docker volume rm ${project_name}_${container_name}-data > /dev/null; else echo "         ...Volume does not exist"; fi
 }
 
 function parse_input() {
-
-	echo "Parse input"
 
     while [ "$1" != "" ]
     do
         local DR_PARAM=$(echo $1 | awk -F= '{print $1}')
         local DR_VALUE=$(echo $1 | awk -F= '{print $2}')
 
-		
-
         case $DR_PARAM in
-            --prune)
-                DR_PRUNE="true"
-				echo "   DR_PRUNE=$DR_PRUNE"
-                ;;  
+
             --clean)
                 DR_CLEAN="true"
-				echo "   DR_CLEAN=$DR_CLEAN"
+                ;;	
+			--build)
+                DR_BUILD="true"
                 ;;				
             --container) 
                 DR_CONTAINER=$DR_VALUE
-				echo "   DR_CONTAINER=$DR_CONTAINER"
                 ;;
             --project)
                 DR_PROJECT=$DR_VALUE
-				echo "   DR_PROJECT=$DR_PROJECT"
+                ;;
+            --containershort)
+                DR_CONTAINERSHORT=$DR_VALUE
                 ;;
             *) # Handles all unknown parameter
                 echo "   Ignoring unknown parameter \"$PARAM\"" "WARNING"
@@ -66,21 +55,10 @@ function parse_input() {
         esac
         shift
     done
-}
 
-function docker_remove_all() {
-	
-	echo "Remove all container"
-
-	for i in "${!arr[@]}"
-	do 
-		docker_remove $DR_PROJECT $i 
-	done
-}
-
-function docker_prune() {
-	echo "Prune all images and volumes"
-	docker system prune -f -a
+	if [ "$DR_PROJECT" == "" ]; then exit 1; fi
+	if [ "$DR_CONTAINER" == "" ]; then exit 1; fi
+	if [ "$DR_SETALIAS" == "true" ] && [ "$DR_CONTAINERSHORT" == "" ]; then exit 1; fi
 }
 
 function set_alias() {
@@ -93,15 +71,38 @@ function set_alias() {
 	alias dl$container_short_name='''docker logs '${project_name}'_'${container_name}'_1'''
 }
 
-function main() {
-    
+function docker_build() {
+	
+	local project_name="$1"
+	local container_name="$2"
+
+	echo "(Re-)build image $2"
+	docker-compose build "$container_name" > /dev/null 2>&1
+
+	if [ "$?" == "0" ]
+	then
+		echo "   success"
+	else
+		echo "   failed"
+	fi
+}
+
+function main() {   
     parse_input $@
+	
+	if [ "$DR_CLEAN" == "true" ] 
+	then 
+		docker_remove $DR_PROJECT $DR_CONTAINER
+	fi 
 
-	if [ "$DR_CONTAINER" == "" ]; then docker_remove_all; fi
-	if [ "$DR_CONTAINER" == "" ] && [ $DR_PRUNE == "true" ]; then docker_remove_all; docker_prune; fi
-	if [ "$DR_CONTAINER" != "" ]; then docker_remove $DR_PROJECT $DR_CONTAINER; fi
+	if [ "$DR_SETALIAS" == "true" ] 
+	then 
+		set_alias $DR_PROJECT $DR_CONTAINER
+	fi
 
+	if [ "$DR_BUILD" == "true" ] 
+	then 
+		docker_build $DR_PROJECT $DR_CONTAINER
+	fi
 }
 main $@
-
-docker-compose --project-name frickeldave up -d

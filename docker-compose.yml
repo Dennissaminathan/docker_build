@@ -6,6 +6,11 @@ services:
         dockerfile: Dockerfile-alpine
         context: ./../alpine
     image: frickeldave/alpine:latest
+  build:
+    build: 
+        dockerfile: Dockerfile-build
+        context: .
+    image: frickeldave/build:latest  
   coredns:
     build: 
         dockerfile: Dockerfile-coredns

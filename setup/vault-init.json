@@ -1,0 +1,51 @@
+{
+    "certificates": {
+        "CRT_VALIDITY":"3650",
+        "CRT_C":"DE",
+        "CRT_S":"BAVARIAN",
+        "CRT_L":"HOERGERTSHAUSEN",
+        "CRT_OU":"FRICKELDAVE",
+        "CRT_CN":"PROXY.GLOBAL"
+    },
+    "mariadb": {
+        "MDB_ROOTPWD":"frickeldave2go",
+        "MDB_ADMINUSER":"adminmdb",
+        "MDB_BACKUPUSER":"backupmdb",
+        "MDB_ADMINPWD":"frickeldave2go",
+        "MDB_BACKUPPWD":"frickeldave2go",
+        "MDB_HEALTHPWD":"frickeldave2go",
+        "MDB_COLLATION":"utf8_unicode_ci",
+        "MDB_CHARACTERSET":"utf8"
+    },
+    "vault": {
+        "VLT_MYSQLADMINUSER":"adminmdb",
+        "VLT_MYSQLADMINPASSWORD":"frickeldave2go",
+        "VLT_MYSQLHOST":"mariadb",
+        "VLT_MYSQLPORT":"3306",
+        "VLT_MYSQLDB":"vault",
+        "VLT_MYSQLUSERNAME":"vault",
+        "VLT_MYSQLPASSWORD":"vault2go",
+        "VLT_MYSQLHEALTHUSER":"healthstatus",
+        "VLT_MYSQLHEALTHPWD":"frickeldave2go",
+        "VLT_IPADDRESS":"0.0.0.0",
+        "VLT_PORT":"7443",
+        "VLT_REMOVE_DB":"true"
+    },
+    "gitea": {
+        "GT_MYSQLADMINUSER":"adminmdb",
+        "GT_MYSQLADMINPASSWORD":"frickeldave2go",
+        "GT_MYSQLHOST":"mariadb",
+        "GT_MYSQLPORT":"3306",
+        "GT_MYSQLDB":"gitea",
+        "GT_MYSQLUSERNAME":"gitea",
+        "GT_MYSQLPASSWORD":"gitea2go",
+        "GT_MYSQLHEALTHUSER":"healthstatus",
+        "GT_MYSQLHEALTHPWD":"frickeldave2go",
+        "GT_PROTOCOL":"https",
+        "GT_HTTP_PORT":"6443",
+        "GT_INITIALADMIN":"fdadmin",
+        "GT_INITIALADMINPWD":"Gitea2Go",
+        "GT_INITIALADMINMAIL":"dog-admin@msg.group",
+        "GT_REMOVE_DB":"true"
+    }
+}

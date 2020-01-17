@@ -1,0 +1,12 @@
+FROM frickeldave/alpine:latest
+
+LABEL MAINTAINER="David Koenig <dave@frickeldave.de>"
+
+ARG IMAGE_NAME=frickeldave/build
+ARG IMAGE_VERSION=1.1
+
+ADD setup/vault-init.json /home/appuser/app/vault-init.json
+
+RUN chown appuser:appuser /home/appuser/app/vault-init.json
+
+USER appuser
