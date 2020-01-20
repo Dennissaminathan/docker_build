@@ -10,8 +10,11 @@ function main() {
     parse_input $@
     vault_get_token
     vault_check_status
-    vault_init
-    vault_add_secrets
+    
+    if [ "$VI_INIT" == "1" ]; then vault_init; fi
+    if [ "$VI_SECRET" == "1" ]; then vault_add_secrets; fi
+    if [ "$VI_AUTH" == "1" ]; then echo "handle auth"; fi
+
     cleanup 0
 }
 
@@ -25,6 +28,14 @@ function parse_input() {
         local VI_VALUE=$(echo $1 | awk -F= '{print $2}')
 
         case $VI_PARAM in	
+            --init)
+                VI_INIT=1
+                echo "   Init vault server"
+                ;;
+            --secret)
+                VI_SECRET=1
+                echo "   Add screts to vault server"
+                ;;
             --container) 
                 VI_CONTAINER=$VI_VALUE
 				echo "   VI_CONTAINER=$VI_CONTAINER"
@@ -52,7 +63,7 @@ function parse_input() {
 function vault_unseal() {
     
     echo "unseal the vault"
-    docker exec -it ${VI_PROJECT}_${VI_CONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_ADDR="'${VI_VAULTURL}':'${VI_VAULTPORT}'";grep "Unseal Key" /home/appuser/data/vault_keys.txt | cut -f2- -d: | tr -d " " | while read -r line; do /home/appuser/app/vault operator unseal $line; done'  > /dev/null 2>&1
+    docker exec -it ${VI_PROJECT}_${VI_CONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_ADDR="'${VI_VAULTURL}':'${VI_VAULTPORT}'";grep "Unseal Key" /home/appuser/data/vault_keys.txt | cut -f2- -d: | tr -d " " | while read -r line; do /home/appuser/app/vault operator unseal $line; done'  #> /dev/null 2>&1
 
 	if [ "$?" == "0" ]
 	then
@@ -290,6 +301,7 @@ function vault_add_roles() {
 
     vault_write_apppolicy "certificates"
     vault_write_approle "mariadb"
+    vault_write_approle "vault"
     vault_write_approle "gitea"
 
     local roleid=$(docker exec -it ${VI_PROJECT}_${VI_CONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${VI_TOKEN}'"; export VAULT_ADDR="'${VI_VAULTURL}':'${VI_VAULTPORT}'"; //home//appuser//app//vault read -format=json auth/approle_frickeldave/role/gitea/role-id | jq -r ".data.role_id"')

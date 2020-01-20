@@ -18,18 +18,19 @@ services:
     image: frickeldave/mariadb:latest
     restart: always
     ports:
-      - "3306:3306"
+      - "13306:13306"
     volumes:
       - mariadbvault-data:/home/appuser/data
     networks:
       - default
     healthcheck:
-      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -pfrickeldave2go"
+      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -pfrickeldave2go -P 13306"
       interval: 5s
       timeout: 10s
       retries: 3
     environment:
       - MDB_ROOTPWD=frickeldave2go
+      - MDB_PORT=13306
       - MDB_ADMINUSER=adminmdb
       - MDB_BACKUPUSER=backupmdb
       - MDB_ADMINPWD=frickeldave2go
@@ -51,13 +52,13 @@ services:
     depends_on:
       - mariadbvault
     ports:
-      - "7443:7443"
+      - "10443:10443"
     volumes:
       - vault-data:/home/appuser/data
     networks:
       - default
     healthcheck:
-      test: "curl --fail https://localhost:7443 --insecure || false"
+      test: "curl --fail https://localhost:10443 --insecure || false"
       interval: 5s
       timeout: 10s
       retries: 3
@@ -65,14 +66,14 @@ services:
       - VLT_MYSQLADMINUSER=adminmdb
       - VLT_MYSQLADMINPASSWORD=frickeldave2go
       - VLT_MYSQLHOST=mariadbvault
-      - VLT_MYSQLPORT=3306
+      - VLT_MYSQLPORT=13306
       - VLT_MYSQLDB=vault
       - VLT_MYSQLUSERNAME=vault
       - VLT_MYSQLPASSWORD=vault2go
       - VLT_MYSQLHEALTHUSER=healthstatus
       - VLT_MYSQLHEALTHPWD=frickeldave2go
       - VLT_IPADDRESS=0.0.0.0
-      - VLT_PORT=7443
+      - VLT_PORT=10443
       - VLT_REMOVE_DB=true
       - CRT_VALIDITY=3650
       - CRT_C=DE

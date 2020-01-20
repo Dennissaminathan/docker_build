@@ -3,6 +3,7 @@
 MC_PRUNE="false"
 MC_CLEAN="false"
 MC_BUILD="false"
+MC_SECRET="false"
 MC_PROJECT="frickeldave"
 
 if [ $MC_CLEAN == "true" ]
@@ -51,5 +52,16 @@ docker-compose -f ./docker-compose-stage1.yml --project-name "$MC_PROJECT" up -d
 echo "#####################################################################"
 echo "### configure vault server"
 echo "#####################################################################" 
-./vault-init.sh --container=vault --project="$MC_PROJECT"
+./vault-init.sh --init --container=vault --project="$MC_PROJECT" --vaultport=10443 --vaulturl=https://127.0.0.1
 
+if [ "$MC_SECRET" == "true" ] 
+then
+    echo "#####################################################################"
+    echo "### Add secrets to vault server"
+    echo "#####################################################################" 
+    ./vault-init.sh --secret --container=vault --project="$MC_PROJECT" --vaultport=10443 --vaulturl=https://127.0.0.1
+fi
+echo "#####################################################################"
+echo "### startup systems - Stage 2"
+echo "#####################################################################"
+docker-compose -f ./docker-compose-stage2.yml --project-name "$MC_PROJECT" up -d
