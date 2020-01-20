@@ -17,6 +17,7 @@ then
     ./docker-rebuild.sh --clean --container="nginx" --project="$MC_PROJECT"
     ./docker-rebuild.sh --clean --container="coredns" --project="$MC_PROJECT"
     ./docker-rebuild.sh --clean --container="mariadb" --project="$MC_PROJECT"
+    ./docker-rebuild.sh --clean --container="mariadbvault" --project="$MC_PROJECT"
     ./docker-rebuild.sh --clean --container="vault" --project="$MC_PROJECT"
     ./docker-rebuild.sh --clean --container="gitea" --project="$MC_PROJECT"
 fi
@@ -32,20 +33,20 @@ then
     echo "#####################################################################"
     echo "### build systems"
     echo "#####################################################################"
-    ./docker-rebuild.sh --build --container="alpine" --project="$MC_PROJECT"
-    ./docker-rebuild.sh --build --container="build" --project="$MC_PROJECT"
-    ./docker-rebuild.sh --build --container="go" --project="$MC_PROJECT"
-    ./docker-rebuild.sh --build --container="nginx" --project="$MC_PROJECT"
-    ./docker-rebuild.sh --build --container="coredns" --project="$MC_PROJECT"
-    ./docker-rebuild.sh --build --container="mariadb" --project="$MC_PROJECT"
-    ./docker-rebuild.sh --build --container="vault" --project="$MC_PROJECT"
-    ./docker-rebuild.sh --build --container="gitea" --project="$MC_PROJECT"
+    ./docker-rebuild.sh --build --container="alpine" --project="$MC_PROJECT" --filename="./docker-compose-stage1.yml"
+    ./docker-rebuild.sh --build --container="build" --project="$MC_PROJECT" --filename="./docker-compose-stage1.yml"
+    ./docker-rebuild.sh --build --container="go" --project="$MC_PROJECT" --filename="./docker-compose-stage1.yml"
+    ./docker-rebuild.sh --build --container="mariadb" --project="$MC_PROJECT" --filename="./docker-compose-stage1.yml"
+    ./docker-rebuild.sh --build --container="vault" --project="$MC_PROJECT" --filename="./docker-compose-stage1.yml"
+    ./docker-rebuild.sh --build --container="nginx" --project="$MC_PROJECT"  --filename="./docker-compose-stage2.yml"
+    ./docker-rebuild.sh --build --container="coredns" --project="$MC_PROJECT" --filename="./docker-compose-stage2.yml"
+    ./docker-rebuild.sh --build --container="gitea" --project="$MC_PROJECT" --filename="./docker-compose-stage2.yml"
 fi
 
 echo "#####################################################################"
-echo "### startup systems"
+echo "### startup systems - Stage 1"
 echo "#####################################################################"
-docker-compose --project-name "$MC_PROJECT" up -d
+docker-compose -f ./docker-compose-stage1.yml --project-name "$MC_PROJECT" up -d
 
 echo "#####################################################################"
 echo "### configure vault server"

@@ -4,6 +4,7 @@ DR_CLEAN="false"
 DR_PROJECT="frickeldave"
 DR_SET_ALIAS="true"
 DR_CONTAINER=""
+DR_FILENAME=""
 
 function docker_remove() { 
 
@@ -13,16 +14,16 @@ function docker_remove() {
 	echo "   remove container ""$container_name"""
 
 	echo "      Stop existing container ""$container_name"""
-	if [ "$(docker ps -f name=${project_name}_${container_name}_1 -q)" ]; then echo "         ...Container exist, stop..."; docker stop ${project_name}_${container_name}_1 > /dev/null; else echo "         ...Container does not exist"; fi
+	if [ "$(docker ps -f name=${project_name}_${container_name}_1 -q)" ]; then echo "         ...Container exist, stop..."; docker stop ${project_name}_${container_name}_1 > /dev/null; fi
 
 	echo "      Delete existing container ""$container_name"""
-	if [ "$(docker ps -f name=${project_name}_${container_name}_1 -a -q)" ]; then echo "         ...Container exist, delete..."; docker rm ${project_name}_${container_name}_1 > /dev/null; else echo "         ...Container does not exist"; fi
+	if [ "$(docker ps -f name=${project_name}_${container_name}_1 -a -q)" ]; then echo "         ...Container exist, delete..."; docker rm ${project_name}_${container_name}_1 > /dev/null; fi
 
 	echo "      Delete existing image ""$container_name"""
-	if [ "$(docker images ${project_name}/${container_name} -q)" ]; then echo "         ...Image exist, delete..."; docker rmi ${project_name}/${container_name} -f > /dev/null; else echo "         ...Image does not exist"; fi
+	if [ "$(docker images ${project_name}/${container_name} -q)" ]; then echo "         ...Image exist, delete..."; docker rmi ${project_name}/${container_name} -f > /dev/null; fi
 
 	echo "      Delete existing volume ""$container_name"""
-	if [ "$(docker volume ls -f name=${project_name}_${container_name}-data -q)" ]; then echo "         ...Volume exist, delete..."; docker volume rm ${project_name}_${container_name}-data > /dev/null; else echo "         ...Volume does not exist"; fi
+	if [ "$(docker volume ls -f name=${project_name}_${container_name}-data -q)" ]; then echo "         ...Volume exist, delete..."; docker volume rm ${project_name}_${container_name}-data > /dev/null; fi
 }
 
 function parse_input() {
@@ -48,6 +49,9 @@ function parse_input() {
                 ;;
             --containershort)
                 DR_CONTAINERSHORT=$DR_VALUE
+                ;;
+			--filename)
+                DR_FILENAME=$DR_VALUE
                 ;;
             *) # Handles all unknown parameter
                 echo "   Ignoring unknown parameter \"$PARAM\"" "WARNING"
@@ -75,10 +79,16 @@ function docker_build() {
 	
 	local project_name="$1"
 	local container_name="$2"
+	local file_name="$3"
 
-	echo "(Re-)build image $2"
-	docker-compose build "$container_name" > /dev/null 2>&1
-
+	echo "(Re-)build image $container_name"
+	if [ "$file_name" == "" ]
+	then 
+		docker-compose build "$container_name" > /dev/null 2>&1
+	else
+		echo "   Use file: $file_name"
+		docker-compose -f "$file_name" build "$container_name" #> /dev/null 2>&1
+	fi
 	if [ "$?" == "0" ]
 	then
 		echo "   success"
@@ -102,7 +112,7 @@ function main() {
 
 	if [ "$DR_BUILD" == "true" ] 
 	then 
-		docker_build $DR_PROJECT $DR_CONTAINER
+		docker_build $DR_PROJECT $DR_CONTAINER $DR_FILENAME
 	fi
 }
 main $@

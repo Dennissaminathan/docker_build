@@ -20,7 +20,7 @@
     "vault": {
         "VLT_MYSQLADMINUSER":"adminmdb",
         "VLT_MYSQLADMINPASSWORD":"frickeldave2go",
-        "VLT_MYSQLHOST":"mariadb",
+        "VLT_MYSQLHOST":"mariadbvault",
         "VLT_MYSQLPORT":"3306",
         "VLT_MYSQLDB":"vault",
         "VLT_MYSQLUSERNAME":"vault",
@@ -45,7 +45,7 @@
         "GT_HTTP_PORT":"6443",
         "GT_INITIALADMIN":"fdadmin",
         "GT_INITIALADMINPWD":"Gitea2Go",
-        "GT_INITIALADMINMAIL":"dog-admin@msg.group",
+        "GT_INITIALADMINMAIL":"fdadmin@frickeldave.global",
         "GT_REMOVE_DB":"true"
     }
 }

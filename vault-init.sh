@@ -231,7 +231,6 @@ function vault_add_secrets() {
     vault_write_kvsecret "/certificates" "CRT_OU" "$secretvalue" "patch"
     secretvalue=$(config_get_value "certificates" "CRT_CN")
     vault_write_kvsecret "/certificates" "CRT_CN" "$secretvalue" "patch"
-    vault_write_apppolicy "certificates"
 
     # mariadb secrets
     echo "Send mariadb secrets to vault"
@@ -251,7 +250,6 @@ function vault_add_secrets() {
     vault_write_kvsecret "/systems/mariadb" "MDB_COLLATION" "$secretvalue" "patch"
     secretvalue=$(config_get_value "mariadb" "MDB_CHARACTERSET")
     vault_write_kvsecret "/systems/mariadb" "MDB_CHARACTERSET" "$secretvalue" "patch"
-    vault_write_approle "mariadb"
 
     # gitea secrets
     echo "Send gitea secrets to vault"
@@ -285,6 +283,13 @@ function vault_add_secrets() {
     vault_write_kvsecret "/systems/gitea" "GT_INITIALADMINMAIL" "$secretvalue" "patch"
     secretvalue=$(config_get_value "gitea" "GT_REMOVE_DB")
     vault_write_kvsecret "/systems/gitea" "GT_REMOVE_DB" "$secretvalue" "patch"
+
+}
+
+function vault_add_roles() {
+
+    vault_write_apppolicy "certificates"
+    vault_write_approle "mariadb"
     vault_write_approle "gitea"
 
     local roleid=$(docker exec -it ${VI_PROJECT}_${VI_CONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${VI_TOKEN}'"; export VAULT_ADDR="'${VI_VAULTURL}':'${VI_VAULTPORT}'"; //home//appuser//app//vault read -format=json auth/approle_frickeldave/role/gitea/role-id | jq -r ".data.role_id"')
