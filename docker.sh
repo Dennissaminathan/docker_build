@@ -43,6 +43,35 @@ function docker_build() {
 	fi
 }
 
+function docker_write_roleid() {
+	
+	local project_name="$1"
+	local container_name="$2"
+	local role_id="$3"
+
+	log "Inject role-id to docker container ${project_name}_${container_name}_1"
+	docker exec -it ${project_name}_${container_name}_1 sh -c 'echo '$role_id' > /home/appuser/data/vault_roleid.txt' > /dev/null 2>&1
+    if [ ! $? = 0 ] 
+    then 
+         log "Failed to write roleid to \"${project_name}_${container_name}_1\". Leaving script"
+         exit 1
+    fi
+}
+
+function docker_write_secretid() {
+	
+	local project_name="$1"
+	local container_name="$2"
+	local secret_id="$3"
+
+	log "Inject secret-id to docker container ${project_name}_${container_name}_1"
+	docker exec -it ${project_name}_${container_name}_1 sh -c 'echo '$secret_id' > /home/appuser/data/vault_secretid.txt'
+    if [ ! $? = 0 ]; 
+    then 
+         log "Failed to write secretid to \"${project_name}_${container_name}_1\". Leaving script"
+         exit 1
+    fi
+}
 
 function set_alias() {
 	

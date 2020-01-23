@@ -1,88 +1,5 @@
 #!/bin/bash 
 
-function main() {
-    
-
-    if [ "$VI_GETROLEID" == "1" ]; then echo $(vault_get_role_id); fi
-    if [ "$VI_GETSECRETID" == "1" ]; then echo $(vault_get_secret_id); fi
-    if [ "$VI_GETAPPTOKEN" == "1" ]; then echo $(vault_get_apptoken); fi
-
-}
-
-function parse_input() {
-
-	log "Parse input"
-
-    while [ "$1" != "" ]
-    do
-        local VI_PARAM=$(echo $1 | awk -F= '{print $1}')
-        local VI_VALUE=$(echo $1 | awk -F= '{print $2}')
-
-        case $VI_PARAM in	
-            --init)
-                VI_INIT=1
-                echo "   Init vault server"
-                ;;
-            --secret)
-                VI_SECRET=1
-                log "   Add screts to vault server"
-                ;;
-            --auth) 
-                VI_AUTH=1
-				log "   Add policies and roles"
-                ;;
-            --getsecretid) 
-                VI_GETSECRETID=1
-				log "   Get secret-id"
-                ;;
-            --getroleid) 
-                VI_GETROLEID=1
-				log "   Get role-id"
-                ;; 
-            --getapptoken) 
-                VI_GETAPPTOKEN=1
-				log "   Get apptoken"
-                ;; 
-            --appname) 
-                VI_APPNAME=$VI_VALUE
-				log "   VI_APPNAME=$VI_APPNAME"
-                ;;
-            --secretid) 
-                VI_SECRETID=$VI_VALUE
-				log "   VI_SECRETID=********"
-                ;;   
-            --roleid) 
-                VI_ROLEID=$VI_VALUE
-				log "   VI_ROLEID=********"
-                ;;                                                 
-            --container) 
-                VI_CONTAINER=$VI_VALUE
-				log "   VI_CONTAINER=$VI_CONTAINER"
-                ;;                
-            --project)
-                VI_PROJECT=$VI_VALUE
-				log "   VI_PROJECT=$project_name"
-                ;;
-            --vaulturl)
-                VI_VAULTURL=$VI_VALUE
-				log "   VI_VAULTURL=$VI_VAULTURL"
-                ;;
-            --vaultport)
-                VI_VAULTPORT=$VI_VALUE
-				log "   VI_VAULTPORT=$VI_VAULTPORT"
-                ;;
-            --log)
-                VI_LOG=1
-				log "   Logging enabled"
-                ;;
-            *) # Handles all unknown parameter
-                log "   Ignoring unknown parameter \"$PARAM\""
-                ;;
-        esac
-        shift
-    done
-}
-
 function vault_get_root_token() {
 
     local project_name="$1"
@@ -99,8 +16,8 @@ function vault_get_root_token() {
     root_token=$(docker exec -it ${project_name}_${container_name}_1 sh -c 'egrep "^Initial Root Token:" /home/appuser/data/vault_keys.txt | cut -f2- -d: | tr -d " "')
     if [ "$root_token" == "" ]; 
     then 
-         log "   Failed. Leaving script"
-         cleanup 1
+         log "Failed to get root token. Leaving script"
+         exit 1
     fi
     echo $root_token
 }
@@ -124,14 +41,14 @@ function vault_check_status() {
         if [ $? -ne 0 ]
         then 
             log "Failed to unseal vault"
-            cleanup 1
+            exit 1
         fi
     elif [ $ret -eq 0 ]
     then
         log "Vault is unsealed"
     else
         log "Vault server not working" 
-        cleanup 1
+        exit 1
     fi
 }
 
@@ -152,7 +69,7 @@ function vault_unseal() {
 	else
 		log "   failed"
         
-        cleanup 1
+        exit 1
 	fi
 }
 
@@ -181,7 +98,7 @@ function vault_init() {
     if [ ! $? = 0 ]
     then
         log "   failed to create secret store. Leaving script."
-        cleanup 1
+        exit 1
     fi
 
     ########################################################################
@@ -200,7 +117,7 @@ function vault_init() {
     if [ ! $? = 0 ]
     then
         log "   failed. Leaving script."
-        cleanup 1
+        exit 1
     fi
 
     ########################################################################
@@ -219,7 +136,7 @@ function vault_init() {
     if [ ! $? = 0 ]
     then
         log "   failed. Leaving script."
-        cleanup 1
+        exit 1
     fi
     
     ########################################################################
@@ -242,7 +159,7 @@ function vault_init() {
     if [ ! $? = 0 ]
     then
         log "   failed. Leaving script."
-        cleanup 1
+        exit 1
     fi
     
     log "   Create admin user (${project_name}_admin)"
@@ -250,7 +167,7 @@ function vault_init() {
     if [ ! $? = 0 ]
     then
         log "   failed. Leaving script."
-        cleanup 1
+        exit 1
     fi
 
     log "   User successful created. You can login now with command ""vault login -method=userpass -path=userpass_${project_name} username=${project_name}_admin password=*****"
@@ -365,7 +282,7 @@ function vault_write_kvsecret() {
     if [ ! "$?" == "0" ]; 
     then 
         log "   failed to create secret. Leaving script"
-        cleanup 1
+        exit 1
     fi
 }
 
@@ -383,7 +300,7 @@ function vault_write_approle() {
     if [ ! $? = 0 ]; 
     then 
         log "   failed. Leaving script"
-        cleanup 1
+        exit 1
     fi
 }
 
@@ -412,7 +329,7 @@ function vault_write_apppolicy() {
     if [ ! $? = 0 ]
     then
         log "   failed. Leaving script."
-        cleanup 1
+        exit 1
     fi
 }
 
@@ -427,6 +344,13 @@ function vault_get_role_id() {
 
     log 'get role id from auth/approle_'${project_name}'/role/'${app_name}'/role-id'
     local roleid=$(docker exec -it ${project_name}_${container_name}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${vault_token}'"; export VAULT_ADDR="'${vault_url}':'${vault_port}'"; //home//appuser//app//vault read -format=json auth/approle_'${project_name}'/role/'${app_name}'/role-id | jq -r ".data.role_id"')
+
+    if [ ! $? = 0 ]
+    then
+        log "   failed. Leaving script."
+        exit 1
+    fi
+    
     echo "$roleid"
 }
 
@@ -441,6 +365,11 @@ function vault_get_secret_id() {
 
     log 'get secret id from auth/approle_'${project_name}'/role/'${app_name}'/secret-id'
     local secretid=$(docker exec -it ${project_name}_${container_name}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${vault_token}'"; export VAULT_ADDR="'${vault_url}':'${vault_port}'"; //home//appuser//app//vault write -f -format=json auth/approle_'${project_name}'/role/'${app_name}'/secret-id | jq -r ".data.secret_id"')
+    if [ ! $? = 0 ]
+    then
+        log "   failed. Leaving script."
+        exit 1
+    fi
     echo "$secretid"
 
 }
