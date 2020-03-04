@@ -1,0 +1,201 @@
+version: '3.7'
+
+services:
+  alpine:
+    build: 
+      dockerfile: Dockerfile-alpine
+      context: ./../alpine
+    image: #project#/alpine:latest
+  build:
+    build: 
+      dockerfile: Dockerfile-build
+      context: .
+    image: #project#/build:latest  
+  mariadbvault:
+    image: #project#/mariadb:latest
+    restart: "no"
+    ports:
+      - "#mariadbvaultEXTPORT#:#mariadbvaultINTPORT#"
+    volumes:
+      - mariadbvault-data:/home/appuser/data
+    networks:
+      - default
+    healthcheck:
+      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#mariadbvaultHEALTHPWD# -P #mariadbvaultEXTPORT#"
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - MDB_ROLEID=#mariadbvaultROLEID#
+      - MDB_ROOTPWD=#mariadbvaultROOTPWD#
+      - MDB_PORT=#mariadbvaultINTPORT#
+      - MDB_ADMINUSER=#mariadbvaultADMINUSER#
+      - MDB_BACKUPUSER=#mariadbvaultBACKUPUSER#
+      - MDB_ADMINPWD=#mariadbvaultADMINPWD#
+      - MDB_BACKUPPWD=#mariadbvaultBACKUPPWD#
+      - MDB_HEALTHPWD=#mariadbvaultHEALTHPWD#
+      - MDB_COLLATION=#mariadbvaultCOLLATION#
+      - MDB_CHARACTERSET=#mariadbvaultCHARACTERSET#
+  go:
+    build: 
+      dockerfile: Dockerfile-go
+      context: ./../go
+    image: #project#/go:latest
+  vault:
+    build: 
+      dockerfile: Dockerfile-vault
+      context: ./../vault
+    image: #project#/vault:latest
+    restart: "no"
+    depends_on:
+      - mariadbvault
+    ports:
+      - "#vaultEXTPORT#:#vaultINTPORT#"
+    volumes:
+      - vault-data:/home/appuser/data
+    networks:
+      - default
+    healthcheck:
+      test: "curl --fail https://localhost:#vaultEXTPORT# --insecure || false"
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - VLT_ROLEID=#vaultROLEID#
+      - VLT_MYSQLADMINUSER=#vaultMYSQLADMINUSER#
+      - VLT_MYSQLADMINPASSWORD=#vaultMYSQLADMINPASSWORD#
+      - VLT_MYSQLHOST=#vaultMYSQLHOST#
+      - VLT_MYSQLPORT=#vaultMYSQLPORT#
+      - VLT_MYSQLDB=#vaultMYSQLDB#
+      - VLT_MYSQLUSERNAME=#vaultMYSQLUSERNAME#
+      - VLT_MYSQLPASSWORD=#vaultMYSQLPASSWORD#
+      - VLT_MYSQLHEALTHUSER=#vaultMYSQLHEALTHUSER#
+      - VLT_MYSQLHEALTHPWD=#vaultMYSQLHEALTHPWD#
+      - VLT_IPADDRESS=#vaultIPADDRESS#
+      - VLT_PORT=#vaultINTPORT#
+      - VLT_REMOVE_DB=#vaultREMOVE_DB#
+      - CRT_VALIDITY=3650
+      - CRT_C=DE
+      - CRT_S=BAVARIAN
+      - CRT_L=HOERGERTSHAUSEN
+      - CRT_OU=FRICKELDAVE
+      - CRT_CN=VAULT.GLOBAL
+  coredns:
+    build: 
+      dockerfile: Dockerfile-coredns
+      context: ./../coredns
+    image: #project#/coredns:latest
+    restart: "no"
+    ports:
+     - "#corednsEXTPORT#:#corednsINTPORT#/udp"
+    volumes:
+      - coredns-data:/home/appuser/data
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "dig", "#corednsDIGADDRESS#"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+  nginx:
+    build: 
+      dockerfile: Dockerfile-nginx
+      context: ./../nginx
+    image: #project#/nginx:latest
+    restart: "no"
+    ports:
+      - "#nginxEXTPORT#:#nginxINTPORT#"
+    volumes:
+      - nginx-data:/home/appuser/data
+    networks:
+      - default
+    healthcheck:
+      test: "curl --fail https://localhost:#nginxEXTPORT# --insecure || false"
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - NX_ROLEID=#nginxROLEID#
+      - CRT_VALIDITY=3650
+      - CRT_C=DE
+      - CRT_S=BAVARIAN
+      - CRT_L=HOERGERTSHAUSEN
+      - CRT_OU=FRICKELDAVE
+      - CRT_CN=VAULT.GLOBAL
+  mariadb:
+    build: 
+      dockerfile: Dockerfile-mariadb
+      context: ./../mariadb
+    image: #project#/mariadb:latest
+    restart: "no"
+    ports:
+      - "#mariadbEXTPORT#:#mariadbINTPORT#"
+    volumes:
+      - mariadb-data:/home/appuser/data
+    networks:
+      - default
+    healthcheck:
+      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#project#2go -P #mariadbEXTPORT#"
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - MDB_ROLEID=#mariadbROLEID#
+      - MDB_ROOTPWD=#mariadbROOTPWD#
+      - MDB_PORT=#mariadbINTPORT#
+      - MDB_ADMINUSER=#mariadbADMINUSER#
+      - MDB_BACKUPUSER=#mariadbBACKUPUSER#
+      - MDB_ADMINPWD=#mariadbADMINPWD#
+      - MDB_BACKUPPWD=#mariadbBACKUPPWD#
+      - MDB_HEALTHPWD=#mariadbHEALTHPWD#
+      - MDB_COLLATION=#mariadbCOLLATION#
+      - MDB_CHARACTERSET=#mariadbCHARACTERSET#
+  gitea:
+    build: 
+      dockerfile: Dockerfile-gitea
+      context: ./../gitea
+    image: #project#/gitea:latest
+    restart: "no"
+    depends_on:
+      - mariadb
+    ports:
+    - "#giteaEXTPORT#:#giteaINTPORT#"
+    volumes:
+      - gitea-data:/home/appuser/data
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:#giteaINTPORT#", "--insecure"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - GT_ROLEID=#giteaROLEID#
+      - GT_MYSQLADMINUSER=#giteaMYSQLADMINUSER#
+      - GT_MYSQLADMINPASSWORD=#giteaMYSQLADMINPASSWORD#
+      - GT_MYSQLHOST=#giteaMYSQLHOST#
+      - GT_MYSQLPORT=#giteaMYSQLPORT#
+      - GT_MYSQLDB=#giteaMYSQLDB#
+      - GT_MYSQLUSERNAME=#giteaMYSQLUSERNAME#
+      - GT_MYSQLPASSWORD=#giteaMYSQLPASSWORD#
+      - GT_MYSQLHEALTHUSER=#giteaMYSQLHEALTHUSER#
+      - GT_MYSQLHEALTHPWD=#giteaMYSQLHEALTHPWD#
+      - GT_PROTOCOL=#giteaPROTOCOL#
+      - GT_HTTP_PORT=#giteaINTPORT#
+      - GT_INITIALADMIN=#giteaINITIALADMIN#
+      - GT_INITIALADMINPWD=#giteaINITIALADMINPWD#
+      - GT_INITIALADMINMAIL=#giteaINITIALADMINMAIL#
+      - GT_REMOVE_DB=#giteaREMOVE_DB#
+      - CRT_VALIDITY=3650
+      - CRT_C=DE
+      - CRT_S=BAVARIAN
+      - CRT_L=HOERGERTSHAUSEN
+      - CRT_OU=FRICKELDAVE
+      - CRT_CN=VAULT.GLOBAL
+volumes:
+  mariadbvault-data:
+  vault-data:
+  coredns-data:
+  nginx-data:
+  mariadb-data:
+  gitea-data:

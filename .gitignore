@@ -4,4 +4,6 @@
 *.dll
 *.so
 *.dylib
+docker-compose*.yml
+docker-compose*.yaml
 vault_keys.txt

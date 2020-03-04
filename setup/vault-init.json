@@ -7,45 +7,81 @@
         "CRT_OU":"FRICKELDAVE",
         "CRT_CN":"PROXY.GLOBAL"
     },
-    "mariadb": {
-        "MDB_ROOTPWD":"frickeldave2go",
-        "MDB_ADMINUSER":"adminmdb",
-        "MDB_BACKUPUSER":"backupmdb",
-        "MDB_ADMINPWD":"frickeldave2go",
-        "MDB_BACKUPPWD":"frickeldave2go",
-        "MDB_HEALTHPWD":"frickeldave2go",
-        "MDB_COLLATION":"utf8_unicode_ci",
-        "MDB_CHARACTERSET":"utf8"
-    },
-    "vault": {
-        "VLT_MYSQLADMINUSER":"adminmdb",
-        "VLT_MYSQLADMINPASSWORD":"frickeldave2go",
-        "VLT_MYSQLHOST":"mariadbvault",
-        "VLT_MYSQLPORT":"3306",
-        "VLT_MYSQLDB":"vault",
-        "VLT_MYSQLUSERNAME":"vault",
-        "VLT_MYSQLPASSWORD":"vault2go",
-        "VLT_MYSQLHEALTHUSER":"healthstatus",
-        "VLT_MYSQLHEALTHPWD":"frickeldave2go",
-        "VLT_IPADDRESS":"0.0.0.0",
-        "VLT_PORT":"7443",
-        "VLT_REMOVE_DB":"true"
-    },
-    "gitea": {
-        "GT_MYSQLADMINUSER":"adminmdb",
-        "GT_MYSQLADMINPASSWORD":"frickeldave2go",
-        "GT_MYSQLHOST":"mariadb",
-        "GT_MYSQLPORT":"3306",
-        "GT_MYSQLDB":"gitea",
-        "GT_MYSQLUSERNAME":"gitea",
-        "GT_MYSQLPASSWORD":"gitea2go",
-        "GT_MYSQLHEALTHUSER":"healthstatus",
-        "GT_MYSQLHEALTHPWD":"frickeldave2go",
-        "GT_PROTOCOL":"https",
-        "GT_HTTP_PORT":"6443",
-        "GT_INITIALADMIN":"fdadmin",
-        "GT_INITIALADMINPWD":"Gitea2Go",
-        "GT_INITIALADMINMAIL":"fdadmin@frickeldave.global",
-        "GT_REMOVE_DB":"true"
-    }
+    "containers":[
+        {
+            "mariadbvault": {
+                "ROLEID":"mdbvaultroleid",
+                "EXTPORT":"3306",
+                "INTPORT":"3306",
+                "ROOTPWD":"frickeldave2go",
+                "ADMINUSER":"adminmdb",
+                "BACKUPUSER":"backupmdb",
+                "ADMINPWD":"frickeldave2go",
+                "BACKUPPWD":"frickeldave2go",
+                "HEALTHPWD":"frickeldave2go",
+                "COLLATION":"utf8_unicode_ci",
+                "CHARACTERSET":"utf8"
+            },
+            "vault": {
+                "ROLEID":"vaultroleid",
+                "MYSQLADMINUSER":"adminmdb",
+                "MYSQLADMINPASSWORD":"frickeldave2go",
+                "MYSQLHOST":"mariadbvault",
+                "MYSQLPORT":"3306",
+                "MYSQLDB":"vault",
+                "MYSQLUSERNAME":"vault",
+                "MYSQLPASSWORD":"vault2go",
+                "MYSQLHEALTHUSER":"healthstatus",
+                "MYSQLHEALTHPWD":"frickeldave2go",
+                "IPADDRESS":"0.0.0.0",
+                "EXTPORT":"10443",
+                "INTPORT":"10443",
+                "REMOVE_DB":"true"
+            },
+            "coredns": {
+                "ROLEID":"corednsroleid",
+                "EXTPORT":"53",
+                "INTPORT":"53",
+                "DIGADDRESS":"frickeldave.global"
+            },
+            "nginx": {
+                "ROLEID":"nginxroleid",
+                "EXTPORT":"443",
+                "INTPORT":"20443",
+                "DIGADDRESS":"frickeldave.global"
+            },
+            "mariadb": {
+                "ROLEID":"mdbroleid",
+                "EXTPORT":"3307",
+                "INTPORT":"3307",
+                "ROOTPWD":"frickeldave2go",
+                "ADMINUSER":"adminmdb",
+                "BACKUPUSER":"backupmdb",
+                "ADMINPWD":"frickeldave2go",
+                "BACKUPPWD":"frickeldave2go",
+                "HEALTHPWD":"frickeldave2go",
+                "COLLATION":"utf8_unicode_ci",
+                "CHARACTERSET":"utf8"
+            },
+            "gitea": {
+                "ROLEID":"gitearoleid",
+                "MYSQLADMINUSER":"adminmdb",
+                "MYSQLADMINPASSWORD":"frickeldave2go",
+                "MYSQLHOST":"mariadb",
+                "MYSQLPORT":"3307",
+                "MYSQLDB":"gitea",
+                "MYSQLUSERNAME":"gitea",
+                "MYSQLPASSWORD":"gitea2go",
+                "MYSQLHEALTHUSER":"healthstatus",
+                "MYSQLHEALTHPWD":"frickeldave2go",
+                "PROTOCOL":"https",
+                "EXTPORT":"30443",
+                "INTPORT":"30443",
+                "INITIALADMIN":"fdadmin",
+                "INITIALADMINPWD":"Gitea2Go",
+                "INITIALADMINMAIL":"fdadmin@frickeldave.global",
+                "REMOVE_DB":"true"
+            }
+        }
+    ]
 }
