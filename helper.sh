@@ -29,8 +29,8 @@ function test_internet() {
     
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-    curl -sSf $test_url > /dev/null
-    if [ "$?" == "0" ]
+    ping -w 1 -n 1 $test_url
+    if [ $? -eq 0 ]
     then 
         log "Internet connection available"
         MC_LOGINDENT=$((MC_LOGINDENT-3))
