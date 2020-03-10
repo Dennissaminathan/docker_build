@@ -4,7 +4,7 @@ services:
   alpine:
     build: 
       dockerfile: Dockerfile-alpine
-      context: ./../alpine
+      context: ./../docker_alpine
     image: #project#/alpine:latest
   build:
     build: 
@@ -39,12 +39,12 @@ services:
   go:
     build: 
       dockerfile: Dockerfile-go
-      context: ./../go
+      context: ./../docker_go
     image: #project#/go:latest
   vault:
     build: 
       dockerfile: Dockerfile-vault
-      context: ./../vault
+      context: ./../docker_vault
     image: #project#/vault:latest
     restart: "no"
     depends_on:
@@ -83,7 +83,7 @@ services:
   coredns:
     build: 
       dockerfile: Dockerfile-coredns
-      context: ./../coredns
+      context: ./../docker_coredns
     image: #project#/coredns:latest
     restart: "no"
     ports:
@@ -100,7 +100,7 @@ services:
   nginx:
     build: 
       dockerfile: Dockerfile-nginx
-      context: ./../nginx
+      context: ./../docker_nginx
     image: #project#/nginx:latest
     restart: "no"
     ports:
@@ -125,7 +125,7 @@ services:
   mariadb:
     build: 
       dockerfile: Dockerfile-mariadb
-      context: ./../mariadb
+      context: ./../docker_mariadb
     image: #project#/mariadb:latest
     restart: "no"
     ports:
@@ -153,7 +153,7 @@ services:
   gitea:
     build: 
       dockerfile: Dockerfile-gitea
-      context: ./../gitea
+      context: ./../docker_gitea
     image: #project#/gitea:latest
     restart: "no"
     depends_on:

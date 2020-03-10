@@ -29,7 +29,7 @@ function test_internet() {
     
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-    ping -w 1 -n 1 $test_url
+    ping -w 1 -n 1 $test_url > /dev/null
     if [ $? -eq 0 ]
     then 
         log "Internet connection available"
@@ -72,6 +72,38 @@ function parse_parameter() {
     done
 
     if [ "$MC_PROJECT" == "" ]; then log "\"Project\" not configured"; exit 1; fi
+
+    MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
+
+function git_download_all() {
+    git_download https://github.com/Frickeldave/docker_go "docker_go"
+    git_download https://github.com/Frickeldave/docker_nginx "docker_nginx"
+    git_download https://github.com/Frickeldave/docker_coredns "docker_coredns"
+    git_download https://github.com/Frickeldave/docker_mariadb "docker_mariadb"
+    git_download https://github.com/Frickeldave/docker_vault "docker_vault"
+    git_download https://github.com/Frickeldave/docker_gitea "docker_gitea"
+    git_download https://github.com/Frickeldave/docker_java "docker_java"
+    git_download https://github.com/Frickeldave/docker_jenkins "docker_jenkins"
+}
+
+function git_download() {
+    local giturl=$1
+    local gittarget=$2
+
+    MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+    log "Get files from ${giturl}"
+    if [ -d "${MC_WORKDIR}/../${gittarget}/.git" ]
+    then
+        log "Target directory already exist. Doing pull."
+        pushd "${MC_WORKDIR}/../${gittarget}"
+        git pull /dev/null 2>&1
+        popd
+    else
+        log "Target directory doesn't exist. Doing clone."
+        git clone "${giturl}" "${MC_WORKDIR}/../${gittarget}" /dev/null 2>&1
+    fi
 
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }

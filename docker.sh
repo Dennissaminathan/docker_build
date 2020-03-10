@@ -3,7 +3,7 @@
 function docker_clean() {
 
 	MC_LOGINDENT=$((MC_LOGINDENT+3))
-
+	#TODO: Replace with dynamic list from vault-init.json
 	docker_remove "alpine"
 	docker_remove "build"
 	docker_remove "go"
@@ -13,6 +13,11 @@ function docker_clean() {
 	docker_remove "mariadbvault"
 	docker_remove "vault"
 	docker_remove "gitea"
+	docker_remove "jdk11"
+	docker_remove "jre11"
+	docker_remove "jre8"
+	docker_remove "jdk8"
+	docker_remove "jenkins"
 
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
@@ -27,7 +32,7 @@ function docker_build_setup() {
   	echo "  alpine:" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
     echo "    build:" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 	echo "      dockerfile: Dockerfile-alpine" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
-	echo "      context: ./../alpine" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
+	echo "      context: ./../docker_alpine" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 	echo "    image: ${MC_PROJECT}/alpine:latest" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
   	echo "  build:" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
     echo "    build:" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"

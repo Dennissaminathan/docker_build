@@ -35,11 +35,17 @@ function main() {
     log "docker clean"
     docker_clean
 
+    log "download files needed for build process"
+    git_download https://github.com/Frickeldave/docker_alpine "docker_alpine"
+
     log "docker build setup"
     docker_build_setup
 
     log "config get containers"
     config_get_containers
+    
+    log "download all needed git repos"
+    git_download_all
 
     log "config create docker compose file"
     config_create_docker_compose_file
