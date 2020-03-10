@@ -1,23 +1,23 @@
 #!/bin/bash
 
-function docker_clean() {
+function docker_clean_all() {
 
 	MC_LOGINDENT=$((MC_LOGINDENT+3))
 	#TODO: Replace with dynamic list from vault-init.json
-	docker_remove "alpine"
-	docker_remove "build"
-	docker_remove "go"
-	docker_remove "nginx"
-	docker_remove "coredns"
-	docker_remove "mariadb"
-	docker_remove "mariadbvault"
-	docker_remove "vault"
-	docker_remove "gitea"
-	docker_remove "jdk11"
-	docker_remove "jre11"
-	docker_remove "jre8"
-	docker_remove "jdk8"
-	docker_remove "jenkins"
+	docker_clean "alpine"
+	docker_clean "build"
+	docker_clean "go"
+	docker_clean "nginx"
+	docker_clean "coredns"
+	docker_clean "mariadb"
+	docker_clean "mariadbvault"
+	docker_clean "vault"
+	docker_clean "gitea"
+	docker_clean "jdk11"
+	docker_clean "jre11"
+	docker_clean "jre8"
+	docker_clean "jdk8"
+	docker_clean "jenkins"
 
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
@@ -40,8 +40,8 @@ function docker_build_setup() {
 	echo "      context: ." >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 	echo "    image: ${MC_PROJECT}/build:latest"   >> "${MC_WORKDIR}/docker-compose-setupbuild.yml" 
 
-	docker_build_image "alpine" "${MC_WORKDIR}/docker-compose-setupbuild.yml"
-	docker_build_image "build" "${MC_WORKDIR}/docker-compose-setupbuild.yml"
+	docker_build "alpine" "${MC_WORKDIR}/docker-compose-setupbuild.yml"
+	docker_build "build" "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 
 	rm -f "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 
@@ -53,9 +53,9 @@ function docker_build_vault() {
 	MC_LOGINDENT=$((MC_LOGINDENT+3))
 
 	log "Build mariadb, go and vault image"
-	docker_build_image "go" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
-	docker_build_image "mariadb" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
-	docker_build_image "vault" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "go" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "mariadb" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "vault" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
@@ -65,9 +65,14 @@ function docker_build_all() {
 	MC_LOGINDENT=$((MC_LOGINDENT+3))
 
 	log "Build all other images"
-	docker_build_image "nginx" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
-	docker_build_image "coredns" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
-	docker_build_image "gitea" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "nginx" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "coredns" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "gitea" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "jdk8" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "jre8" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "jdk11" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "jre11" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "jenkins" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
@@ -96,21 +101,43 @@ function docker_vault_stop() {
 function docker_start_all() {
 	MC_LOGINDENT=$((MC_LOGINDENT+3))
 	log "start mariadb for vault"
-	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d mariadbvault > /dev/null 2>&1
+	docker_start "mariadbvault"
 	log "start vault"
-	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d vault > /dev/null 2>&1
+	docker_start "vault"
 	log "start mariadb"
-	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d mariadb > /dev/null 2>&1
+	docker_start "mariadb"
 	log "start nginx"
-	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d nginx > /dev/null 2>&1
+	docker_start "nginx"
 	log "start coredns"
-	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d coredns > /dev/null 2>&1
+	docker_start "coredns"
 	log "start gitea"
-	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d gitea > /dev/null 2>&1
+	docker_start "gitea"
+	log "start jenkins"
+	docker_start "jenkins"
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
-function docker_remove() { 
+function docker_start() {
+	
+	local container_name=$1
+	
+	MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+	log "start container \"$container_name\""
+	
+	if [ $MC_LOGSTART -eq 1 ]
+	then
+		log "docker-compose output enabled"; 
+		docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d $container_name
+	else
+		log "docker-compose output disabled"; 
+		docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d $container_name > /dev/null 2>&1
+	fi 
+
+	MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
+
+function docker_clean() { 
 
 	local container_name="$1"
 
@@ -130,7 +157,7 @@ function docker_remove() {
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
-function docker_build_image() {
+function docker_build() {
 	
 	local container_name="$1"
 	local file_name="$2"
@@ -141,11 +168,11 @@ function docker_build_image() {
 	log "(Re-)build image $container_name"
 	if [ "$file_name" == "" ]
 	then 
-		docker-compose build "$container_name" > /dev/null 2>&1
+		if [ $MC_LOGBUILD -eq 1 ]; then log "docker-compose output enabled"; docker-compose build "$container_name"; else log "docker-compose output disabled"; docker-compose build "$container_name" > /dev/null 2>&1; fi
 		ret=$?
 	else
 		log "Use file: $file_name"
-		docker-compose -f "$file_name" build "$container_name" > /dev/null 2>&1
+		if [ $MC_LOGBUILD -eq 1 ]; then log "docker-compose output enabled"; docker-compose -f "$file_name" build "$container_name"; else log "docker-compose output disabled"; docker-compose -f "$file_name" build "$container_name" > /dev/null 2>&1; fi
 		ret=$?
 	fi
 	if [ "$ret" == "0" ]

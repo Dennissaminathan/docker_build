@@ -81,6 +81,17 @@
                 "INITIALADMINPWD":"Gitea2Go",
                 "INITIALADMINMAIL":"fdadmin@frickeldave.global",
                 "REMOVE_DB":"true"
+            },
+            "jenkins": {
+                "ROLEID":"jenkinsroleid",
+                "CERTPWD":"frickeldave2go",
+                "HTTPS_PORT":"40443",
+                "HTTP_PORT":"48080",
+                "EXTPORT":"40443",
+                "INTPORT":"40443",                
+                "MAIL":"jenkins@frickeldave.global",
+                "URL":"jenkins.frickeldave.global",
+                "SLAVEPORT":"50000"
             }
         }
     ]

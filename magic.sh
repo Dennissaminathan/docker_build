@@ -21,22 +21,97 @@ source $MC_WORKDIR/docker.sh
 source $MC_WORKDIR/vault.sh
 source $MC_WORKDIR/config.sh
 
-function main() {
+function magic_main() {
 
-    log "set variables"
-    set_variables
+    helper_set_variables
 
-    log "parse parameter"
-    parse_parameter $@
+    helper_parse_parameter $@
 
     log "test internet"
-    test_internet
+    helper_test_internet
 
-    log "docker clean"
-    docker_clean
+    if [ ! "$MC_RESETIMAGE" == "0" ]; then magic_reset_image $MC_RESETIMAGE; fi
+    if [ "$MC_RESETALL" == "1" ]; then magic_default $@; fi
+    
+    log "Finished"
+}
+
+function magic_reset_image() {
+
+    local docker_image=$1
+
+    case $docker_image in
+        alpine)
+            log "single rebuild not supported, run magic.sh without params"
+            exit 0
+            ;;
+        vault)
+            log "single rebuild not supported, run magic.sh without params"
+            exit 0
+            ;;
+        mariadb)
+            log "single rebuild not supported, run magic.sh without params"
+            exit 0
+            ;;
+        go)
+            log "single rebuild not supported, run magic.sh without params"
+            exit 0
+            ;;
+        jre8)
+            log "single rebuild not supported, run magic.sh without params"
+            exit 0
+            ;;
+        jre11)
+            log "single rebuild not supported, run magic.sh without params"
+            exit 0
+            ;;
+        jdk8)
+            log "single rebuild not supported, run magic.sh without params"
+            exit 0
+            ;;
+        jdk11)
+            log "single rebuild not supported, run magic.sh without params"
+            exit 0
+            ;;
+        nginx)
+            magic_reset_image_helper $docker_image
+            ;;
+        coredns)
+            magic_reset_image_helper $docker_image
+            ;;
+        gitea)
+            magic_reset_image_helper $docker_image
+            ;;
+        jenkins)
+            magic_reset_image_helper $docker_image
+            ;;
+        *) # Handles all unknown parameter 
+            log "   Ignoring unsupported docker image \"$docker_image\""
+            ;;
+    esac
+    shift
+}
+
+function magic_reset_image_helper() {
+    local docker_image=$1
+
+    log "docker clean system from container and related data for \"${docker_image}\""
+    docker_clean "$docker_image"
+    log "Refresh files"
+    helper_git_download "https://github.com/Frickeldave/docker_${docker_image}" "docker_$docker_image"
+    log "docker build"
+    docker_build "$docker_image" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+    log "start container"
+	docker_start $docker_image
+}
+
+function magic_default() {
+
+    log "docker clean all"
+    docker_clean_all
 
     log "download files needed for build process"
-    git_download https://github.com/Frickeldave/docker_alpine "docker_alpine"
+    helper_git_download https://github.com/Frickeldave/docker_alpine "docker_alpine"
 
     log "docker build setup"
     docker_build_setup
@@ -45,7 +120,7 @@ function main() {
     config_get_containers
     
     log "download all needed git repos"
-    git_download_all
+    helper_git_download_all
 
     log "config create docker compose file"
     config_create_docker_compose_file
@@ -81,4 +156,4 @@ function main() {
     docker_start_all
 }
 
-main $@
+magic_main $@

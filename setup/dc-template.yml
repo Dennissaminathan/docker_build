@@ -41,6 +41,26 @@ services:
       dockerfile: Dockerfile-go
       context: ./../docker_go
     image: #project#/go:latest
+  jre8:
+    build: 
+      dockerfile: Dockerfile-jre8
+      context: ./../docker_java/jre8
+    image: #project#/jre8:latest
+  jdk8:
+    build: 
+      dockerfile: Dockerfile-jdk8
+      context: ./../docker_java/jdk8
+    image: #project#/jdk8:latest
+  jre11:
+    build: 
+      dockerfile: Dockerfile-jre11
+      context: ./../docker_java/jre11
+    image: #project#/jre11:latest
+  jdk11:
+    build: 
+      dockerfile: Dockerfile-jdk11
+      context: ./../docker_java/jdk11
+    image: #project#/jdk11:latest
   vault:
     build: 
       dockerfile: Dockerfile-vault
@@ -192,6 +212,39 @@ services:
       - CRT_L=HOERGERTSHAUSEN
       - CRT_OU=FRICKELDAVE
       - CRT_CN=VAULT.GLOBAL
+  jenkins:
+    build: 
+      dockerfile: Dockerfile-jenkins
+      context: ./../docker_jenkins
+    image: #project#/jenkins:latest
+    restart: "no"
+    depends_on:
+      - jre11
+    ports:
+    - "#jenkinsEXTPORT#:#jenkinsINTPORT#"
+    volumes:
+      - jenkins-data:/home/appuser/data
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:#jenkinsINTPORT#", "--insecure"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - JKS_ROLEID=#jenkinsROLEID#
+      - JKS_CERTPWD=#jenkinsCERTPWD#
+      - JKS_HTTPS_PORT=#jenkinsHTTPSPORT#
+      - JKS_HTTP_PORT=#jenkinsHTTPSPORT#
+      - JKS_MAIL=#jenkinsMAIL#
+      - JKS_URL=#jenkinsURL#
+      - JKS_SLAVEPORT=#jenkinsSLAVEPORT#
+      - CRT_VALIDITY=3650
+      - CRT_C=DE
+      - CRT_S=BAVARIAN
+      - CRT_L=HOERGERTSHAUSEN
+      - CRT_OU=FRICKELDAVE
+      - CRT_CN=VAULT.GLOBAL
 volumes:
   mariadbvault-data:
   vault-data:
@@ -199,3 +252,4 @@ volumes:
   nginx-data:
   mariadb-data:
   gitea-data:
+  jenkins-data:
