@@ -234,8 +234,7 @@ services:
     environment:
       - JKS_ROLEID=#jenkinsROLEID#
       - JKS_CERTPWD=#jenkinsCERTPWD#
-      - JKS_HTTPS_PORT=#jenkinsHTTPSPORT#
-      - JKS_HTTP_PORT=#jenkinsHTTPSPORT#
+      - JKS_HTTPS_PORT=#jenkinsINTPORT#
       - JKS_MAIL=#jenkinsMAIL#
       - JKS_URL=#jenkinsURL#
       - JKS_SLAVEPORT=#jenkinsSLAVEPORT#

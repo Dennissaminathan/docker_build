@@ -87,8 +87,6 @@
             "jenkins": {
                 "ROLEID":"jenkinsroleid",
                 "CERTPWD":"frickeldave2go",
-                "HTTPS_PORT":"40443",
-                "HTTP_PORT":"48080",
                 "EXTPORT":"40443",
                 "INTPORT":"40443",                
                 "MAIL":"jenkins@frickeldave.global",
