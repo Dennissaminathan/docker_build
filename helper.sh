@@ -12,13 +12,25 @@ function log() {
 }
 
 function helper_set_variables() {
+    # Static poroperties
     MC_LOG=1
     MC_LOGINDENT=0
+
+    #Properties overwritten by input parameters
+    MC_START=0
     MC_RESETALL=0
     MC_RESETIMAGE=0
     MC_NOUPDATE=0
     MC_LOGBUILD=0
     MC_LOGSTART=0
+
+    # Certificate proerties overwritten by configuration file
+    MC_CRTVALIDITY="3650"
+    MC_CRTCOUNTRY="DE"
+    MC_CRTSTATE="BAVARIAN"
+    MC_CRTLOCATION="HOERGERTSHAUSEN"
+    MC_CRTOU="LOCALDEV"
+
     # TODO: Die MC_VAULT* Variablen müssen in die vault-init.json Datein übernommen werden.
     MC_VAULTURL="https://127.0.0.1"
     MC_VAULTPORT="10443"
@@ -59,6 +71,9 @@ function helper_parse_parameter() {
                 ;;
             --project) 
                 MC_PROJECT=$value
+                ;;
+            --start)
+                MC_START=1
                 ;;
             --reset-all)
                 MC_RESETALL=1
@@ -158,6 +173,7 @@ function helper_usage() {
     echo ""
     echo " --help                         Show this screen."
     echo " --project=<PROJECTNAME>        Mandatory. The projectname defines containername, imagename, filename, ..."
+    echo " --start                        Start container. \"--reset-all\" must be executed before."
     echo " --reset-all                    Renew all images. When images with same projectname exist, they will be deleted."
     echo " --reset-image=<IMAGENAME>      Reset a single image."
     echo " --no-update                    Prevents the update of the git repos."

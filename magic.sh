@@ -1,18 +1,5 @@
 #!/bin/sh
 
-#examples: 
-#       Run the whole process
-#       ./magic.sh --project="frickeldave"
-#
-#       FOR DEVELOPMENT: Skip the image build process
-#       ./magic.sh --project="frickeldave" --skip-build
-#
-#       FOR DEVELOPMENT: Skip the image build process as well as the setup process
-#       ./magic.sh --project="frickeldave" --skip-build --skip-setup
-
-
-            #docker-compose.exe -f ./docker-compose-build.yml build build
-
 MC_WORKDIR=$(dirname "$(readlink -f "$0")")
 declare -a containers
 
@@ -27,13 +14,41 @@ function magic_main() {
 
     helper_parse_parameter $@
 
-    log "test internet"
-    helper_test_internet
+    if [ $MC_START -eq 1 ]
+    then 
+        magic_start
+        log "Finished"
+        exit 0
+    fi
 
-    if [ ! "$MC_RESETIMAGE" == "0" ]; then magic_reset_image $MC_RESETIMAGE; fi
-    if [ "$MC_RESETALL" == "1" ]; then magic_default $@; fi
+    if [ $MC_RESETIMAGE -ne 0 ]
+    then 
+        log "test internet"
+        helper_test_internet
+
+        magic_reset_image $MC_RESETIMAGE
+        log "Finished"
+        exit 0
+    fi
     
-    log "Finished"
+    if [ $MC_RESETALL -eq 1 ]
+    then 
+        log "test internet"
+        helper_test_internet
+
+        magic_default $@
+        log "Finished"
+        exit 0
+    fi
+    
+    log "No action selected. Try to start containers."
+
+}
+
+function magic_start() {
+
+    log "docker start all"
+    docker_start_all
 }
 
 function magic_reset_image() {
@@ -72,6 +87,9 @@ function magic_reset_image() {
         jdk11)
             log "single rebuild not supported, run magic.sh without params"
             exit 0
+            ;;
+        build)
+            magic_reset_image_helper $docker_image
             ;;
         nginx)
             magic_reset_image_helper $docker_image

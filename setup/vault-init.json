@@ -1,11 +1,10 @@
 {
     "certificates": {
-        "CRT_VALIDITY":"3650",
-        "CRT_C":"DE",
-        "CRT_S":"BAVARIAN",
-        "CRT_L":"HOERGERTSHAUSEN",
-        "CRT_OU":"FRICKELDAVE",
-        "CRT_CN":"PROXY.GLOBAL"
+        "VALIDITY":"3650",
+        "COUNTRY":"DE",
+        "STATE":"BAVARIAN",
+        "LOCATION":"HOERGERTSHAUSEN",
+        "OU":"LOCALDEV"
     },
     "containers":[
         {
@@ -36,7 +35,8 @@
                 "IPADDRESS":"0.0.0.0",
                 "EXTPORT":"10443",
                 "INTPORT":"10443",
-                "REMOVE_DB":"true"
+                "REMOVE_DB":"true",
+                "CRTCOMMONNAME":"VAULT.FRICKELDAVE.GLOBAL"
             },
             "coredns": {
                 "ROLEID":"corednsroleid",
@@ -48,7 +48,8 @@
                 "ROLEID":"nginxroleid",
                 "EXTPORT":"443",
                 "INTPORT":"20443",
-                "DIGADDRESS":"frickeldave.global"
+                "DIGADDRESS":"frickeldave.global",
+                "CRTCOMMONNAME":"NGINX.FRICKELDAVE.GLOBAL"
             },
             "mariadb": {
                 "ROLEID":"mdbroleid",
@@ -80,7 +81,8 @@
                 "INITIALADMIN":"fdadmin",
                 "INITIALADMINPWD":"Gitea2Go",
                 "INITIALADMINMAIL":"fdadmin@frickeldave.global",
-                "REMOVE_DB":"true"
+                "REMOVE_DB":"true",
+                "CRTCOMMONNAME":"GITEA.FRICKELDAVE.GLOBAL"
             },
             "jenkins": {
                 "ROLEID":"jenkinsroleid",
@@ -91,7 +93,8 @@
                 "INTPORT":"40443",                
                 "MAIL":"jenkins@frickeldave.global",
                 "URL":"jenkins.frickeldave.global",
-                "SLAVEPORT":"50000"
+                "SLAVEPORT":"50000",
+                "CRTCOMMONNAME":"JENKINS.FRICKELDAVE.GLOBAL"
             }
         }
     ]
