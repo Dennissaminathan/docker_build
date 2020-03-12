@@ -93,6 +93,15 @@
                 "URL":"jenkins.frickeldave.global",
                 "SLAVEPORT":"50000",
                 "CRTCOMMONNAME":"JENKINS.FRICKELDAVE.GLOBAL"
+            },
+            "sambadc": {
+                "ROLEID":"sambadcroleid",
+                "DCDOMAIN":"frickeldave",
+                "DCADMINPWD":"Frickel#Dave2Go",
+                "DCREALM":"frickeldave.global",
+                "DCDNSFORWARDER":"127.0.0.11",
+                "URL":"jenkins.frickeldave.global",
+                "CRTCOMMONNAME":"SAMBADC.FRICKELDAVE.GLOBAL"
             }
         }
     ]
