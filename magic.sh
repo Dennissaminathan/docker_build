@@ -21,7 +21,7 @@ function magic_main() {
         exit 0
     fi
 
-    if [ $MC_RESETIMAGE -ne 0 ]
+    if [ ! "$MC_RESETIMAGE" == "0" ]
     then 
         log "test internet"
         helper_test_internet
@@ -101,6 +101,9 @@ function magic_reset_image() {
             magic_reset_image_helper $docker_image
             ;;
         jenkins)
+            magic_reset_image_helper $docker_image
+            ;;
+        sambadc)
             magic_reset_image_helper $docker_image
             ;;
         *) # Handles all unknown parameter 

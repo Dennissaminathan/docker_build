@@ -136,40 +136,44 @@ function helper_git_download() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-    log "Get files from ${giturl}"
-    if [ -d "${MC_WORKDIR}/../${gittarget}/.git" ]
+    if [ $MC_NOUPDATE -eq 0 ]
     then
-        log "Target directory already exist. Doing pull."
-        pushd "${MC_WORKDIR}/../${gittarget}"
-        git pull > /dev/null 2>&1
-        if [ $? -eq 0 ]
-        then 
-            log "git pull successful"
-            popd
+        log "Get files from ${giturl}"
+        if [ -d "${MC_WORKDIR}/../${gittarget}/.git" ]
+        then
+            log "Target directory already exist. Doing pull."
+            pushd "${MC_WORKDIR}/../${gittarget}"
+            git pull > /dev/null 2>&1
+            if [ $? -eq 0 ]
+            then 
+                log "git pull successful"
+                popd
+            else
+                log "git pull failed"
+                popd
+                exit 1
+            fi
         else
-            log "git pull failed"
-            popd
-            exit 1
+            log "Target directory doesn't exist. Doing clone."
+            git clone "${giturl}" "${MC_WORKDIR}/../${gittarget}" > /dev/null 2>&1
+            if [ $? -eq 0 ]
+            then 
+                log "git clone successful"
+            else
+                log "git clone failed"
+                exit 1
+            fi
         fi
     else
-        log "Target directory doesn't exist. Doing clone."
-        git clone "${giturl}" "${MC_WORKDIR}/../${gittarget}" > /dev/null 2>&1
-        if [ $? -eq 0 ]
-        then 
-            log "git clone successful"
-        else
-            log "git clone failed"
-            exit 1
-        fi
+        log "git update disabled"
     fi
-
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
 function helper_usage() {
     
     echo ""
-    echo "Usage: ./magic.sh --project <projectname> [OPTION]"
+    echo "Usage: ./magic.sh --project=<projectname> [OPTION]"
     echo ""
     echo " --help                         Show this screen."
     echo " --project=<PROJECTNAME>        Mandatory. The projectname defines containername, imagename, filename, ..."
