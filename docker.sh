@@ -172,11 +172,11 @@ function docker_build() {
 	log "(Re-)build image $container_name"
 	if [ "$file_name" == "" ]
 	then 
-		if [ $MC_LOGBUILD -eq 1 ]; then log "docker-compose output enabled"; docker-compose build "$container_name"; else log "docker-compose output disabled"; docker-compose build "$container_name" > /dev/null 2>&1; fi
+		if [ $MC_LOGBUILD -eq 1 ]; then log "docker-compose output enabled"; docker-compose build "$container_name"; else log "docker-compose output disabled"; docker-compose build "$container_name"; fi
 		ret=$?
 	else
 		log "Use file: $file_name"
-		if [ $MC_LOGBUILD -eq 1 ]; then log "docker-compose output enabled"; docker-compose -f "$file_name" build "$container_name"; else log "docker-compose output disabled"; docker-compose -f "$file_name" build "$container_name" > /dev/null 2>&1; fi
+		if [ $MC_LOGBUILD -eq 1 ]; then log "docker-compose output enabled"; docker-compose -f "$file_name" build "$container_name"; else log "docker-compose output disabled"; docker-compose -f "$file_name" build "$container_name"; fi
 		ret=$?
 	fi
 	if [ "$ret" == "0" ]
