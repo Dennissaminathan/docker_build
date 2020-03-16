@@ -38,10 +38,18 @@ function magic_main() {
 
         magic_default $@
         log "Finished"
+
+        log "Please make sure, that you added the following entries to yout hosts file:"
+        log "   - 127.0.0.1   frickeldave.magic"
+        log "   - 127.0.0.1	  gitea.frickeldave.magic"
+        log "   - 127.0.0.1	  jenkins.frickeldave.magic"
+        log "   - 127.0.0.1	  nexus.frickeldave.magic"
+        log "   - 127.0.0.1	  vault.frickeldave.magic"
+
         exit 0
     fi
     
-    log "No action selected. Try to start containers."
+    log "No action selected."
 
 }
 

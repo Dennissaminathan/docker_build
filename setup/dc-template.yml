@@ -21,7 +21,7 @@ services:
       - mariadbvault-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: 172.6.66.21
+        ipv4_address: #mariadbIPADDR#
     healthcheck:
       test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#mariadbvaultHEALTHPWD# -P #mariadbvaultEXTPORT#"
       interval: 5s
@@ -78,7 +78,7 @@ services:
       - vault-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: 172.6.66.101
+        ipv4_address: #vaultIPADDR#
     healthcheck:
       test: "curl --fail https://localhost:#vaultINTPORT# --insecure || false"
       interval: 5s
@@ -117,12 +117,25 @@ services:
       - coredns-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: 172.6.66.10
+        ipv4_address: #corednsIPADDR#
     healthcheck:
       test: ["CMD", "dig", "#corednsDIGADDRESS#"]
       interval: 5s
       timeout: 10s
       retries: 3
+    environment:
+      - DNS_ROLEID=#corednsROLEID#
+      - DNS_INITDOMAIN=#corednsINITDOMAIN#
+      - DNS_IPADDR=#corednsIPADDR#
+      - VLT_IPADDR=#vaultIPADDR#
+      - NGX_IPADDR=#nginxIPADDR#
+      - MDB_IPADDR=#mariadbIPADDR#
+      - DBV_IPADDR=#mariadbvaultIPADDR#
+      - GT_IPADDR=#giteaIPADDR#
+      - JKS_IPADDR=#jenkinsIPADDR#
+      - NXS_IPADDR=#nexusIPADDR#
+      - DCR_IPADDR=#nexusIPADDR#
+      - SMB_IPADDR=#sambadcIPADDR#
   nginx:
     build: 
       dockerfile: Dockerfile-nginx
@@ -136,14 +149,21 @@ services:
       - nginx-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: 172.6.66.102
+        ipv4_address: #nginxIPADDR#
     healthcheck:
       test: "curl --fail https://localhost:#nginxINTPORT# --insecure || false"
       interval: 5s
       timeout: 10s
       retries: 3
     environment:
-      - NX_ROLEID=#nginxROLEID#
+      - NGX_ROLEID=#nginxROLEID#
+      - NGX_PORT=#nginxINTPORT#
+      - DNS_IPADDR=#corednsIPADDR#
+      - VLT_PORT=#vaultEXTPORT#
+      - GT_PORT=#giteaEXTPORT#
+      - JKS_PORT=#jenkinsEXTPORT#
+      - NXS_PORT=#nexusEXTPORT#
+      - NXS_DOCKERPORT=#nexusDOCKERPORT#
       - CRT_VALIDITY=#certificatesVALIDITY#
       - CRT_C=#certificatesCOUNTRY#
       - CRT_S=#certificatesSTATE#
@@ -163,7 +183,7 @@ services:
       - mariadb-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: 172.6.66.20
+        ipv4_address: #mariadbIPADDR#
     healthcheck:
       test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#project#2go -P #mariadbINTPORT#"
       interval: 5s
@@ -195,7 +215,7 @@ services:
       - gitea-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: 172.6.66.103
+        ipv4_address: #giteaIPADDR#
     healthcheck:
       test: ["CMD", "curl", "-f", "https://localhost:#giteaINTPORT#", "--insecure"]
       interval: 5s
@@ -218,6 +238,12 @@ services:
       - GT_INITIALADMINPWD=#giteaINITIALADMINPWD#
       - GT_INITIALADMINMAIL=#giteaINITIALADMINMAIL#
       - GT_REMOVE_DB=#giteaREMOVE_DB#
+      - GT_MAILENABLED=#giteaMAILENABLED#
+      - GT_MAILSUBJECTPREFIX=#giteaMAILSUBJECTPREFIX#
+      - GT_MAILHOST=#giteaMAILHOST#
+      - GT_MAILFROM=#giteaMAILFROM#
+      - GT_MAILUSER=#giteaMAILUSER#
+      - GT_MAILPASSWD=#giteaMAILPASSWD#
       - CRT_VALIDITY=#certificatesVALIDITY#
       - CRT_C=#certificatesCOUNTRY#
       - CRT_S=#certificatesSTATE#
@@ -239,7 +265,7 @@ services:
       - jenkins-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: 172.6.66.104
+        ipv4_address: #jenkinsIPADDR#
     healthcheck:
       test: ["CMD", "curl", "-f", "https://localhost:#jenkinsINTPORT#", "--insecure"]
       interval: 5s
@@ -271,7 +297,7 @@ services:
       - sambadc-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: 172.6.66.11
+        ipv4_address: #sambadcIPADDR#
     healthcheck:
       test: ["CMD", "curl", "-f", "https://localhost:4343", "--insecure"]
       interval: 5s

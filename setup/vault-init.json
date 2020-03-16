@@ -10,8 +10,8 @@
         {
             "mariadbvault": {
                 "ROLEID":"mdbvaultroleid",
-                "EXTPORT":"3306",
-                "INTPORT":"3306",
+                "EXTPORT":"30102",
+                "INTPORT":"30102",
                 "ROOTPWD":"frickeldave2go",
                 "ADMINUSER":"adminmdb",
                 "BACKUPUSER":"backupmdb",
@@ -19,42 +19,46 @@
                 "BACKUPPWD":"frickeldave2go",
                 "HEALTHPWD":"frickeldave2go",
                 "COLLATION":"utf8_unicode_ci",
-                "CHARACTERSET":"utf8"
+                "CHARACTERSET":"utf8",
+                "IPADDR":"172.6.66.102"
             },
             "vault": {
                 "ROLEID":"vaultroleid",
                 "MYSQLADMINUSER":"adminmdb",
                 "MYSQLADMINPASSWORD":"frickeldave2go",
                 "MYSQLHOST":"mariadbvault",
-                "MYSQLPORT":"3306",
+                "MYSQLPORT":"30102",
                 "MYSQLDB":"vault",
                 "MYSQLUSERNAME":"vault",
                 "MYSQLPASSWORD":"vault2go",
                 "MYSQLHEALTHUSER":"healthstatus",
                 "MYSQLHEALTHPWD":"frickeldave2go",
                 "IPADDRESS":"0.0.0.0",
-                "EXTPORT":"10443",
-                "INTPORT":"10443",
+                "EXTPORT":"30105",
+                "INTPORT":"30105",
                 "REMOVE_DB":"true",
-                "CRTCOMMONNAME":"VAULT.FRICKELDAVE.GLOBAL"
+                "CRTCOMMONNAME":"VAULT.FRICKELDAVE.MAGIC",
+                "IPADDR":"172.6.66.105"
             },
             "coredns": {
                 "ROLEID":"corednsroleid",
                 "EXTPORT":"53",
                 "INTPORT":"53",
-                "DIGADDRESS":"frickeldave.global"
+                "INITDOMAIN":"frickeldave.magic",
+                "DIGADDRESS":"frickeldave.magic",
+                "IPADDR":"172.6.66.100"
             },
             "nginx": {
                 "ROLEID":"nginxroleid",
                 "EXTPORT":"443",
-                "INTPORT":"20443",
-                "DIGADDRESS":"frickeldave.global",
-                "CRTCOMMONNAME":"NGINX.FRICKELDAVE.GLOBAL"
+                "INTPORT":"30104",
+                "CRTCOMMONNAME":"NGINX.FRICKELDAVE.MAGIC",
+                "IPADDR":"172.6.66.104"
             },
             "mariadb": {
                 "ROLEID":"mdbroleid",
-                "EXTPORT":"3307",
-                "INTPORT":"3307",
+                "EXTPORT":"30103",
+                "INTPORT":"30103",
                 "ROOTPWD":"frickeldave2go",
                 "ADMINUSER":"adminmdb",
                 "BACKUPUSER":"backupmdb",
@@ -62,46 +66,62 @@
                 "BACKUPPWD":"frickeldave2go",
                 "HEALTHPWD":"frickeldave2go",
                 "COLLATION":"utf8_unicode_ci",
-                "CHARACTERSET":"utf8"
+                "CHARACTERSET":"utf8",
+                "IPADDR":"172.6.66.103"
             },
             "gitea": {
                 "ROLEID":"gitearoleid",
                 "MYSQLADMINUSER":"adminmdb",
                 "MYSQLADMINPASSWORD":"frickeldave2go",
                 "MYSQLHOST":"mariadb",
-                "MYSQLPORT":"3307",
+                "MYSQLPORT":"30103",
                 "MYSQLDB":"gitea",
                 "MYSQLUSERNAME":"gitea",
                 "MYSQLPASSWORD":"gitea2go",
                 "MYSQLHEALTHUSER":"healthstatus",
                 "MYSQLHEALTHPWD":"frickeldave2go",
                 "PROTOCOL":"https",
-                "EXTPORT":"30443",
-                "INTPORT":"30443",
+                "EXTPORT":"30106",
+                "INTPORT":"30106",
                 "INITIALADMIN":"fdadmin",
                 "INITIALADMINPWD":"Gitea2Go",
-                "INITIALADMINMAIL":"fdadmin@frickeldave.global",
+                "INITIALADMINMAIL":"fdadmin@frickeldave.magic",
                 "REMOVE_DB":"true",
-                "CRTCOMMONNAME":"GITEA.FRICKELDAVE.GLOBAL"
+                "MAILSUBJECTPREFIX":"[Gitea]",
+                "MAILENABLED":"true",
+                "MAILHOST":"mail.frickeldave.magic",
+                "MAILFROM":"gitea@frickeldave.magic",
+                "MAILUSER":"svc_gitea",
+                "MAILPASSWD":"magic2go",
+                "CRTCOMMONNAME":"GITEA.FRICKELDAVE.MAGIC",
+                "IPADDR":"172.6.66.106"
             },
             "jenkins": {
                 "ROLEID":"jenkinsroleid",
                 "CERTPWD":"frickeldave2go",
-                "EXTPORT":"40443",
-                "INTPORT":"40443",                
-                "MAIL":"jenkins@frickeldave.global",
-                "URL":"jenkins.frickeldave.global",
+                "EXTPORT":"30107",
+                "INTPORT":"30107",                
+                "MAIL":"jenkins@frickeldave.magic",
+                "URL":"jenkins.frickeldave.magic",
                 "SLAVEPORT":"50000",
-                "CRTCOMMONNAME":"JENKINS.FRICKELDAVE.GLOBAL"
+                "CRTCOMMONNAME":"JENKINS.FRICKELDAVE.MAGIC",
+                "IPADDR":"172.6.66.107"
             },
             "sambadc": {
                 "ROLEID":"sambadcroleid",
                 "DCDOMAIN":"frickeldave",
                 "DCADMINPWD":"Frickel#Dave2Go",
-                "DCREALM":"frickeldave.global",
+                "DCREALM":"frickeldave.magic",
                 "DCDNSFORWARDER":"127.0.0.11",
-                "URL":"jenkins.frickeldave.global",
-                "CRTCOMMONNAME":"SAMBADC.FRICKELDAVE.GLOBAL"
+                "CRTCOMMONNAME":"SAMBADC.FRICKELDAVE.MAGIC",
+                "IPADDR":"172.6.66.101"
+            },
+            "nexus": {
+                "ROLEID":"nexusroleid",
+                "EXTPORT":"30108",
+                "INTPORT":"30108",
+                "DOCKERPORT":"58096",
+                "IPADDR":"172.6.66.108"
             }
         }
     ]

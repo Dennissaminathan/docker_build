@@ -33,7 +33,7 @@ function helper_set_variables() {
 
     # TODO: Die MC_VAULT* Variablen müssen in die vault-init.json Datein übernommen werden.
     MC_VAULTURL="https://127.0.0.1"
-    MC_VAULTPORT="10443"
+    MC_VAULTPORT="30105"
     MC_VAULTCONTAINER="vault"
 }
 
@@ -184,4 +184,16 @@ function helper_usage() {
     echo " --logbuild                     The output of \"docker-compose build\" is shown."
     echo " --logstart                     The output of \"docker-compose up\" is shown."
     echo ""
+    echo "Servers and ports"
+    echo "  name         ip address         ports"
+    echo "-----------------------------------------"
+    echo "  coredns        172.6.66.100     53"
+    echo "  sambadc        172.6.66.101     several"
+    echo "  mariadbvault   172.6.66.102     30102"
+    echo "  mariadb        172.6.66.103     30103"
+    echo "  nginx          172.6.66.104     30104"
+    echo "  vault          172.6.66.105     30105"
+    echo "  gitea          172.6.66.106     30106"
+    echo "  jenkins        172.6.66.107     30107"
+    echo "  nexus/docker   172.6.66.108     30108/58096"
 }
