@@ -93,7 +93,7 @@ function config_create_docker_compose_file() {
         do
             local param=$(echo $kvp | awk -F= '{print $1}')
             local value=$(echo $kvp | awk -F= '{print $2}')
-            log "replace \"${c}${param}\" with \"${value}\"" 
+            log "replace \"${c}${param}\" with \"${value}\" in compose-file"
             sed -i -e "s/\#${c}${param}\#/${value}/g" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
         done
     done

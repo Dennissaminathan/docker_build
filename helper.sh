@@ -123,6 +123,7 @@ function helper_git_download_all() {
         helper_git_download https://github.com/Frickeldave/docker_gitea "docker_gitea"
         helper_git_download https://github.com/Frickeldave/docker_java "docker_java"
         helper_git_download https://github.com/Frickeldave/docker_jenkins "docker_jenkins"
+        helper_git_download https://github.com/Frickeldave/docker_sambadc "docker_sambadc"
     else
         log "skip git update"
     fi
