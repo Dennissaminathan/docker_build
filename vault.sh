@@ -7,13 +7,13 @@ function vault_get_root_token() {
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
     log "Get vault token from within container"
-    while ! docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'ls /home/appuser/data/vault_keys.txt -al' > /dev/null 2>&1
+    while ! docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'ls /home/appuser/data/vault_keys.txt -al' > /dev/null 2>&1
     do
         log "Wait another 5s for vault server"
         sleep 5
     done
 
-    root_token=$(docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'egrep "^Initial Root Token:" /home/appuser/data/vault_keys.txt | cut -f2- -d: | tr -d " "')
+    root_token=$(docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'egrep "^Initial Root Token:" /home/appuser/data/vault_keys.txt | cut -f2- -d: | tr -d " "')
     if [ "$root_token" == "" ]; 
     then 
          log "Failed to get root token. Leaving script"
@@ -34,7 +34,7 @@ function vault_check_status() {
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
     log "check status of vault server with address ${MC_VAULTURL}:${MC_VAULTPORT}"
-    docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault operator key-status' > /dev/null 2>&1
+    docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault operator key-status' > /dev/null 2>&1
     local ret=$?
 
     if [ $ret -eq 2 ]
@@ -63,7 +63,7 @@ function vault_unseal() {
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
     log "unseal the vault"
-    docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'";grep "Unseal Key" /home/appuser/data/vault_keys.txt | cut -f2- -d: | tr -d " " | while read -r line; do /home/appuser/app/vault operator unseal $line; done'  > /dev/null 2>&1
+    docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'";grep "Unseal Key" /home/appuser/data/vault_keys.txt | cut -f2- -d: | tr -d " " | while read -r line; do /home/appuser/app/vault operator unseal $line; done'  > /dev/null 2>&1
 
 	if [ "$?" == "0" ]
 	then
@@ -84,14 +84,14 @@ function vault_init() {
 
     log "$MC_PROJECT secret store"
     log "   Check if \"$MC_PROJECT\" kv-store exist"
-    if docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault secrets list | grep '$MC_PROJECT'' > /dev/null 2>&1
+    if docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault secrets list | grep '$MC_PROJECT'' > /dev/null 2>&1
     then
         log "   kv-store found. Delete it."
-        docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault secrets disable '$MC_PROJECT'' > /dev/null 2>&1
+        docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault secrets disable '$MC_PROJECT'' > /dev/null 2>&1
     fi
 
     log "   Create new secret store"
-    docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault secrets enable -version=2 -path='${MC_PROJECT}' kv' #> /dev/null 2>&1
+    docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault secrets enable -version=2 -path='${MC_PROJECT}' kv' #> /dev/null 2>&1
     if [ ! $? = 0 ]
     then
         log "   failed to create secret store. Leaving script."
@@ -104,13 +104,13 @@ function vault_init() {
 
     log "Create AppRole Authentication method"
     log "Check if AppRole Authentication method exists"
-    if docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth list | grep approle_'${MC_PROJECT}'' > /dev/null 2>&1
+    if docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth list | grep approle_'${MC_PROJECT}'' > /dev/null 2>&1
     then
         log "Delete Authentication method AppRole"
-        docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth disable approle_'${MC_PROJECT}'' > /dev/null 2>&1
+        docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth disable approle_'${MC_PROJECT}'' > /dev/null 2>&1
     fi
     log "Create Authentication method AppRole"
-    docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth enable -path approle_'${MC_PROJECT}' approle' > /dev/null 2>&1
+    docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth enable -path approle_'${MC_PROJECT}' approle' > /dev/null 2>&1
     if [ ! $? = 0 ]
     then
         log "   failed. Leaving script."
@@ -123,13 +123,13 @@ function vault_init() {
 
     log "Create Userpass Authentication method"
     log "Check if Userpass Authentication method exists"
-    if docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth list | grep userpass_'${MC_PROJECT}'' > /dev/null 2>&1
+    if docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth list | grep userpass_'${MC_PROJECT}'' > /dev/null 2>&1
     then
         log "Delete Userpass authentication method"
-        docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth disable userpass_'${MC_PROJECT}'' > /dev/null 2>&1
+        docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth disable userpass_'${MC_PROJECT}'' > /dev/null 2>&1
     fi
     log "Create Userpass Authentication method"
-    docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth enable -path=userpass_'${MC_PROJECT}' userpass' > /dev/null 2>&1
+    docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault auth enable -path=userpass_'${MC_PROJECT}' userpass' > /dev/null 2>&1
     if [ ! $? = 0 ]
     then
         log "   failed. Leaving script."
@@ -152,7 +152,7 @@ function vault_init() {
     docker cp /tmp/pol.hcl "${MC_PROJECT}_${MC_VAULTCONTAINER}_1:/tmp/pol.hcl"
     
     log "Upload policy to vault"
-    docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault policy write '${MC_PROJECT}'_admin /tmp/pol.hcl' > /dev/null 2>&1
+    docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault policy write '${MC_PROJECT}'_admin /tmp/pol.hcl' > /dev/null 2>&1
     if [ ! $? = 0 ]
     then
         log "   failed. Leaving script."
@@ -160,7 +160,7 @@ function vault_init() {
     fi
     
     log "Create admin user (${MC_PROJECT}_admin)"
-    docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault write auth/userpass_'${MC_PROJECT}'/users/'${MC_PROJECT}'_admin password=test policies="'${MC_PROJECT}'_admin"' > /dev/null 2>&1
+    docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault write auth/userpass_'${MC_PROJECT}'/users/'${MC_PROJECT}'_admin password=test policies="'${MC_PROJECT}'_admin"' > /dev/null 2>&1
     if [ ! $? = 0 ]
     then
         log "Failed. Leaving script."
@@ -225,7 +225,7 @@ function vault_write_kvsecret() {
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
     log "Create secret \"$secretname\" in path \"${MC_PROJECT}/${secretpath}\" with method \"$secretmethod\""
-    docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault kv '$secretmethod' '${MC_PROJECT}${secretpath}' '${secretname}'='${secretvalue}'' > /dev/null 2>&1
+    docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault kv '$secretmethod' '${MC_PROJECT}${secretpath}' '${secretname}'='${secretvalue}'' > /dev/null 2>&1
     if [ ! "$?" == "0" ]; 
     then 
         log "   failed to create secret. Leaving script"
@@ -242,7 +242,7 @@ function vault_write_approle() {
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
     log "Create $app_name role"
-    docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault write auth/approle_'${MC_PROJECT}'/role/'${app_name}' token_policies='${MC_PROJECT}'_systems_'${app_name}' token_ttl=1h token_max_ttl=4h' > /dev/null 2>&1
+    docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault write auth/approle_'${MC_PROJECT}'/role/'${app_name}' token_policies='${MC_PROJECT}'_systems_'${app_name}' token_ttl=1h token_max_ttl=4h' > /dev/null 2>&1
     if [ ! $? = 0 ]; 
     then 
         log "   failed. Leaving script"
@@ -270,7 +270,7 @@ function vault_write_apppolicy() {
     docker cp /tmp/pol.hcl "${MC_PROJECT}_${MC_VAULTCONTAINER}_1:/tmp/pol.hcl"
 
     log "   Upload policy to vault"
-    docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault policy write '${MC_PROJECT}'_systems_'${app_name}' /tmp/pol.hcl' #> /dev/null 2>&1
+    docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault policy write '${MC_PROJECT}'_systems_'${app_name}' /tmp/pol.hcl' #> /dev/null 2>&1
     if [ ! $? = 0 ]
     then
         log "   failed. Leaving script."
@@ -288,7 +288,7 @@ function vault_get_role_id() {
     local root_token=$(vault_get_root_token "$MC_VAULTCONTAINER")
 
     log 'get role id from auth/approle_'${MC_PROJECT}'/role/'${app_name}'/role-id'
-    local roleid=$(docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault read -format=json auth/approle_'${MC_PROJECT}'/role/'${app_name}'/role-id | jq -r ".data.role_id"')
+    local roleid=$(docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault read -format=json auth/approle_'${MC_PROJECT}'/role/'${app_name}'/role-id | jq -r ".data.role_id"')
 
     if [ ! $? = 0 ]
     then
@@ -307,7 +307,7 @@ function vault_get_secret_id() {
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
     log 'get secret id from auth/approle_'${MC_PROJECT}'/role/'${app_name}'/secret-id'
-    local secretid=$(docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault write -f -format=json auth/approle_'${MC_PROJECT}'/role/'${app_name}'/secret-id | jq -r ".data.secret_id"')
+    local secretid=$(docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault write -f -format=json auth/approle_'${MC_PROJECT}'/role/'${app_name}'/secret-id | jq -r ".data.secret_id"')
     if [ ! $? = 0 ]
     then
         log "   failed. Leaving script."
@@ -326,7 +326,7 @@ function vault_get_apptoken() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))
     log "Get apptoken with role_id='${role_id}' and secret_id=********"
-    local apptoken=$(docker exec -it ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault write -format=json auth/approle_'${MC_PROJECT}'/login role_id='${role_id}' secret_id='${secret_id}' | jq -r ".auth.client_token"')
+    local apptoken=$(docker exec -i ${MC_PROJECT}_${MC_VAULTCONTAINER}_1 sh -c 'export VAULT_SKIP_VERIFY=1; export VAULT_TOKEN="'${root_token}'"; export VAULT_ADDR="'${MC_VAULTURL}':'${MC_VAULTPORT}'"; //home//appuser//app//vault write -format=json auth/approle_'${MC_PROJECT}'/login role_id='${role_id}' secret_id='${secret_id}' | jq -r ".auth.client_token"')
     MC_LOGINDENT=$((MC_LOGINDENT-3))
     echo "$apptoken"
 
