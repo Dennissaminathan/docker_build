@@ -159,6 +159,7 @@ services:
       - NGX_ROLEID=#nginxROLEID#
       - NGX_PORT=#nginxINTPORT#
       - DNS_IPADDR=#corednsIPADDR#
+      - DNS_INITDOMAIN=#corednsINITDOMAIN#
       - VLT_PORT=#vaultEXTPORT#
       - GT_PORT=#giteaEXTPORT#
       - JKS_PORT=#jenkinsEXTPORT#
