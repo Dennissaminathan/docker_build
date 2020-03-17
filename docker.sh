@@ -172,11 +172,11 @@ function docker_build() {
 	log "(Re-)build image $container_name"
 	if [ "$file_name" == "" ]
 	then 
-		if [ $MC_LOGBUILD -eq 1 ]; then log "docker-compose output enabled"; docker-compose build "$container_name"; else log "docker-compose output disabled"; docker-compose build "$container_name" > /dev/null 2>&1; fi
+		if [ $MC_LOGBUILD -eq 1 ]; then log "docker-compose output enabled"; docker-compose build "$container_name"; else log "docker-compose output disabled"; docker-compose build "$container_name"; fi
 		ret=$?
 	else
 		log "Use file: $file_name"
-		if [ $MC_LOGBUILD -eq 1 ]; then log "docker-compose output enabled"; docker-compose -f "$file_name" build "$container_name"; else log "docker-compose output disabled"; docker-compose -f "$file_name" build "$container_name" > /dev/null 2>&1; fi
+		if [ $MC_LOGBUILD -eq 1 ]; then log "docker-compose output enabled"; docker-compose -f "$file_name" build "$container_name"; else log "docker-compose output disabled"; docker-compose -f "$file_name" build "$container_name"; fi
 		ret=$?
 	fi
 	if [ "$ret" == "0" ]
@@ -196,7 +196,7 @@ function docker_write_roleid() {
 	local role_id="$2"
 
 	log "Inject role-id to docker container ${MC_PROJECT}_${container_name}_1"
-	docker exec -it ${MC_PROJECT}_${container_name}_1 sh -c 'echo '$role_id' > /home/appuser/data/vault_roleid.txt' > /dev/null 2>&1
+	docker exec -i ${MC_PROJECT}_${container_name}_1 sh -c 'echo '$role_id' > /home/appuser/data/vault_roleid.txt' > /dev/null 2>&1
     if [ ! $? = 0 ] 
     then 
          log "Failed to write roleid to \"${MC_PROJECT}_${container_name}_1\". Leaving script"
@@ -210,7 +210,7 @@ function docker_write_secretid() {
 	local secret_id="$2"
 
 	log "Inject secret-id to docker container ${MC_PROJECT}_${container_name}_1"
-	docker exec -it ${MC_PROJECT}_${container_name}_1 sh -c 'echo '$secret_id' > /home/appuser/data/vault_secretid.txt'
+	docker exec -i ${MC_PROJECT}_${container_name}_1 sh -c 'echo '$secret_id' > /home/appuser/data/vault_secretid.txt'
     if [ ! $? = 0 ]; 
     then 
          log "Failed to write secretid to \"${MC_PROJECT}_${container_name}_1\". Leaving script"
@@ -222,7 +222,7 @@ function set_alias() {
 	
 	local container_name="$1"
 	local container_short_name=${arr[$container_name]}
-	echo "Create alias ""de$container_short_name=""docker exec -it ${MC_PROJECT}_${container_name}_1 sh"""""
-	alias de${container_short_name}='''docker exec -it '${MC_PROJECT}'_'${container_name}'_1 sh'''
+	echo "Create alias ""de$container_short_name=""docker exec -i ${MC_PROJECT}_${container_name}_1 sh"""""
+	alias de${container_short_name}='''docker exec -i '${MC_PROJECT}'_'${container_name}'_1 sh'''
 	alias dl$container_short_name='''docker logs '${MC_PROJECT}'_'${container_name}'_1'''
 }
