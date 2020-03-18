@@ -15,13 +15,14 @@ services:
     image: #project#/mariadb:latest
     hostname: mariadbvault
     restart: "no"
+    dns: #corednsIPADDR#
     ports:
       - "#mariadbvaultEXTPORT#:#mariadbvaultINTPORT#"
     volumes:
       - mariadbvault-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: #mariadbIPADDR#
+        ipv4_address: #mariadbvaultIPADDR#
     healthcheck:
       test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#mariadbvaultHEALTHPWD# -P #mariadbvaultEXTPORT#"
       interval: 5s
@@ -70,6 +71,7 @@ services:
     image: #project#/vault:latest
     hostname: vault
     restart: "no"
+    dns: #corednsIPADDR#
     depends_on:
       - mariadbvault
     ports:
@@ -111,6 +113,7 @@ services:
     image: #project#/coredns:latest
     hostname: coredns
     restart: "no"
+    dns: #corednsIPADDR#
     ports:
      - "#corednsEXTPORT#:#corednsINTPORT#/udp"
     volumes:
@@ -143,6 +146,7 @@ services:
     image: #project#/nginx:latest
     hostname: nginx
     restart: "no"
+    dns: #corednsIPADDR#
     ports:
       - "#nginxEXTPORT#:#nginxINTPORT#"
     volumes:
@@ -178,6 +182,7 @@ services:
     image: #project#/mariadb:latest
     hostname: mariadb
     restart: "no"
+    dns: #corednsIPADDR#
     ports:
       - "#mariadbEXTPORT#:#mariadbINTPORT#"
     volumes:
@@ -208,6 +213,7 @@ services:
     image: #project#/gitea:latest
     hostname: gitea
     restart: "no"
+    dns: #corednsIPADDR#
     depends_on:
       - mariadb
     ports:
@@ -258,6 +264,7 @@ services:
     image: #project#/jenkins:latest
     hostname: jenkins
     restart: "no"
+    dns: #corednsIPADDR#
     depends_on:
       - jre11
     ports:
@@ -292,6 +299,7 @@ services:
     image: #project#/sambadc:latest
     hostname: sambadc
     restart: "no"
+    dns: #corednsIPADDR#
     ports:
     - "4343:4343"
     volumes:

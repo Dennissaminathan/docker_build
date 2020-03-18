@@ -41,9 +41,9 @@ function magic_main() {
 
         log "Please make sure, that you added the following entries to yout hosts file:"
         log "   - 127.0.0.1   frickeldave.magic"
-        log "   - 127.0.0.1	  gitea.frickeldave.magic"
-        log "   - 127.0.0.1	  jenkins.frickeldave.magic"
-        log "   - 127.0.0.1	  nexus.frickeldave.magic"
+        log "   - 127.0.0.1   gitea.frickeldave.magic"
+        log "   - 127.0.0.1   jenkins.frickeldave.magic"
+        log "   - 127.0.0.1   nexus.frickeldave.magic"
         log "   - 127.0.0.1	  vault.frickeldave.magic"
 
         exit 0
