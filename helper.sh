@@ -144,7 +144,8 @@ function helper_git_download() {
         then
             log "Target directory already exist. Doing pull."
             pushd "${MC_WORKDIR}/../${gittarget}"
-            git pull > /dev/null 2>&1
+
+            git pull $giturl master > /dev/null 2>&1
             if [ $? -eq 0 ]
             then 
                 log "git pull successful"

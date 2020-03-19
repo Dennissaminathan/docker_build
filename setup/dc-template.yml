@@ -230,6 +230,7 @@ services:
       retries: 3
     environment:
       - GT_ROLEID=#giteaROLEID#
+      - GT_APPNAME=#giteaAPPNAME#
       - GT_MYSQLADMINUSER=#giteaMYSQLADMINUSER#
       - GT_MYSQLADMINPASSWORD=#giteaMYSQLADMINPASSWORD#
       - GT_MYSQLHOST=#giteaMYSQLHOST#

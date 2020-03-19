@@ -71,6 +71,7 @@
             },
             "gitea": {
                 "ROLEID":"gitearoleid",
+                "APPNAME":"Frickeldave gitea server",
                 "MYSQLADMINUSER":"adminmdb",
                 "MYSQLADMINPASSWORD":"frickeldave2go",
                 "MYSQLHOST":"mariadb",
