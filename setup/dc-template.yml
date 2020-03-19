@@ -276,7 +276,7 @@ services:
       appnet:
         ipv4_address: #jenkinsIPADDR#
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://localhost:#jenkinsINTPORT#", "--insecure"]
+      test: "curl --fail https://localhost:#jenkinsINTPORT# --insecure || false"
       interval: 5s
       timeout: 10s
       retries: 3
