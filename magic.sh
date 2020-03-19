@@ -14,9 +14,9 @@ function magic_main() {
 
     helper_parse_parameter $@
 
-    if [ $MC_START -eq 1 ]
+    if [ $MC_STARTALL -eq 1 ]
     then 
-        magic_start
+        magic_start_all
         log "Finished"
         exit 0
     fi
@@ -27,6 +27,16 @@ function magic_main() {
         helper_test_internet
 
         magic_reset_image $MC_RESETIMAGE
+        log "Finished"
+        exit 0
+    fi
+
+    if [ ! "$MC_STARTIMAGE" == "0" ]
+    then 
+        log "test internet"
+        helper_test_internet
+
+        magic_start_image $MC_STARTIMAGE
         log "Finished"
         exit 0
     fi
@@ -53,7 +63,7 @@ function magic_main() {
 
 }
 
-function magic_start() {
+function magic_start_all() {
 
     log "docker start all"
     docker_start_all
@@ -73,6 +83,10 @@ function magic_reset_image() {
             exit 0
             ;;
         mariadb)
+            log "single rebuild not supported, run magic.sh without params"
+            exit 0
+            ;;
+        mariadbvault)
             log "single rebuild not supported, run magic.sh without params"
             exit 0
             ;;
@@ -121,6 +135,72 @@ function magic_reset_image() {
     shift
 }
 
+function magic_start_image() {
+
+    local docker_image=$1
+
+    case $docker_image in
+        alpine)
+            log "single start not supported, is just a base image for other containers"
+            exit 0
+            ;;
+        vault)
+            log "single rebuild not supported, run magic.sh without params"
+            exit 0
+            ;;
+        mariadb)
+            log "single start not supported, is just a base image for other containers"
+            exit 0
+            ;;
+        mariadbvault)
+            log "single start not supported, is just a base image for other containers"
+            exit 0
+            ;;
+        go)
+            log "single start not supported, is just a base image for other containers"
+            exit 0
+            ;;
+        jre8)
+            log "single start not supported, is just a base image for other containers"
+            exit 0
+            ;;
+        jre11)
+            log "single start not supported, is just a base image for other containers"
+            exit 0
+            ;;
+        jdk8)
+            log "single start not supported, is just a base image for other containers"
+            exit 0
+            ;;
+        jdk11)
+            log "single start not supported, is just a base image for other containers"
+            exit 0
+            ;;
+        build)
+            magic_start_image_helper $docker_image
+            ;;
+        nginx)
+            magic_start_image_helper $docker_image
+            ;;
+        coredns)
+            magic_start_image_helper $docker_image
+            ;;
+        gitea)
+            magic_start_image_helper $docker_image
+            ;;
+        jenkins)
+            magic_start_image_helper $docker_image
+            ;;
+        sambadc)
+            magic_start_image_helper $docker_image
+            ;;
+        *) # Handles all unknown parameter 
+            log "   Ignoring unsupported docker image \"$docker_image\""
+            ;;
+    esac
+    shift
+}
+
 function magic_reset_image_helper() {
     local docker_image=$1
 
@@ -130,6 +210,16 @@ function magic_reset_image_helper() {
     helper_git_download "https://github.com/Frickeldave/docker_${docker_image}" "docker_$docker_image"
     log "docker build"
     docker_build "$docker_image" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+    log "start container"
+	docker_start $docker_image
+}
+
+function magic_start_image_helper() {
+    local docker_image=$1
+
+    log "stop docker-container \"${docker_image}\""
+    docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" down -d ${docker_image} > /dev/null 2>&1
+
     log "start container"
 	docker_start $docker_image
 }

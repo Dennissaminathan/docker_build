@@ -17,9 +17,10 @@ function helper_set_variables() {
     MC_LOGINDENT=0
 
     #Properties overwritten by input parameters
-    MC_START=0
+    MC_STARTALL=0
     MC_RESETALL=0
     MC_RESETIMAGE=0
+    MC_STARTIMAGE=0
     MC_NOUPDATE=0
     MC_LOGBUILD=0
     MC_LOGSTART=0
@@ -72,14 +73,17 @@ function helper_parse_parameter() {
             --project) 
                 MC_PROJECT=$value
                 ;;
-            --start)
-                MC_START=1
+            --start-all)
+                MC_STARTALL=1
                 ;;
             --reset-all)
                 MC_RESETALL=1
                 ;;
             --reset-image)
                 MC_RESETIMAGE=$value
+                ;;
+            --start-image)
+                MC_STARTIMAGE=$value
                 ;;
             --no-update)
                 MC_NOUPDATE=1
@@ -179,9 +183,10 @@ function helper_usage() {
     echo ""
     echo " --help                         Show this screen."
     echo " --project=<PROJECTNAME>        Mandatory. The projectname defines containername, imagename, filename, ..."
-    echo " --start                        Start container. \"--reset-all\" must be executed before."
+    echo " --start-all                    Start all container. \"--reset-all\" must be executed before."
     echo " --reset-all                    Renew all images. When images with same projectname exist, they will be deleted."
-    echo " --reset-image=<IMAGENAME>      Reset a single image."
+    echo " --reset-image=<IMAGENAME>      Reset/rebuild a single image."
+    echo " --start-image=<IMAGENAME>      Start or restart a single image."
     echo " --no-update                    Prevents the update of the git repos."
     echo " --logbuild                     The output of \"docker-compose build\" is shown."
     echo " --logstart                     The output of \"docker-compose up\" is shown."
