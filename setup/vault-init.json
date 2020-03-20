@@ -108,15 +108,6 @@
                 "CRTCOMMONNAME":"JENKINS.FRICKELDAVE.MAGIC",
                 "IPADDR":"172.6.66.107"
             },
-            "sambadc": {
-                "ROLEID":"sambadcroleid",
-                "DCDOMAIN":"frickeldave",
-                "DCADMINPWD":"Frickel#Dave2Go",
-                "DCREALM":"frickeldave.magic",
-                "DCDNSFORWARDER":"127.0.0.11",
-                "CRTCOMMONNAME":"SAMBADC.FRICKELDAVE.MAGIC",
-                "IPADDR":"172.6.66.101"
-            },
             "nexus": {
                 "ROLEID":"nexusroleid",
                 "EXTPORT":"30108",

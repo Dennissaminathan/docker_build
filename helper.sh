@@ -127,7 +127,6 @@ function helper_git_download_all() {
         helper_git_download https://github.com/Frickeldave/docker_gitea "docker_gitea"
         helper_git_download https://github.com/Frickeldave/docker_java "docker_java"
         helper_git_download https://github.com/Frickeldave/docker_jenkins "docker_jenkins"
-        helper_git_download https://github.com/Frickeldave/docker_sambadc "docker_sambadc"
     else
         log "skip git update"
     fi
@@ -195,7 +194,6 @@ function helper_usage() {
     echo "  name         ip address         ports"
     echo "-----------------------------------------"
     echo "  coredns        172.6.66.100     53"
-    echo "  sambadc        172.6.66.101     several"
     echo "  mariadbvault   172.6.66.102     30102"
     echo "  mariadb        172.6.66.103     30103"
     echo "  nginx          172.6.66.104     30104"

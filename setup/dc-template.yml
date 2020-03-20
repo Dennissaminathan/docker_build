@@ -138,7 +138,6 @@ services:
       - JKS_IPADDR=#jenkinsIPADDR#
       - NXS_IPADDR=#nexusIPADDR#
       - DCR_IPADDR=#nexusIPADDR#
-      - SMB_IPADDR=#sambadcIPADDR#
   nginx:
     build: 
       dockerfile: Dockerfile-nginx
@@ -293,37 +292,6 @@ services:
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
       - CRT_CN=#jenkinsCRTCOMMONNAME#
-  sambadc:
-    build: 
-      dockerfile: Dockerfile-sambadc
-      context: ./../docker_sambadc
-    image: #project#/sambadc:latest
-    hostname: sambadc
-    restart: "no"
-    dns: #corednsIPADDR#
-    ports:
-    - "4343:4343"
-    volumes:
-      - sambadc-data:/home/appuser/data
-    networks:
-      appnet:
-        ipv4_address: #sambadcIPADDR#
-    healthcheck:
-      test: ["CMD", "curl", "-f", "https://localhost:4343", "--insecure"]
-      interval: 5s
-      timeout: 10s
-      retries: 3
-    environment:
-      - SMB_DCDOMAIN=#sambadcDCDOMAIN#
-      - SMB_DCADMINPWD=#sambadcDCADMINPWD#
-      - SMB_DCREALM=#sambadcDCREALM#
-      - SMB_DCDNSFORWARDER=#sambadcDCDNSFORWARDER#
-      - CRT_VALIDITY=#certificatesVALIDITY#
-      - CRT_C=#certificatesCOUNTRY#
-      - CRT_S=#certificatesSTATE#
-      - CRT_L=#certificatesLOCATION#
-      - CRT_OU=#certificatesOU#
-      - CRT_CN=#sambadcCRTCOMMONNAME#
 networks:
   appnet:
     ipam:
@@ -338,4 +306,3 @@ volumes:
   mariadb-data:
   gitea-data:
   jenkins-data:
-  sambadc-data:

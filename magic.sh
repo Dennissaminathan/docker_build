@@ -125,9 +125,6 @@ function magic_reset_image() {
         jenkins)
             magic_reset_image_helper $docker_image
             ;;
-        sambadc)
-            magic_reset_image_helper $docker_image
-            ;;
         *) # Handles all unknown parameter 
             log "   Ignoring unsupported docker image \"$docker_image\""
             ;;
@@ -189,9 +186,6 @@ function magic_start_image() {
             magic_start_image_helper $docker_image
             ;;
         jenkins)
-            magic_start_image_helper $docker_image
-            ;;
-        sambadc)
             magic_start_image_helper $docker_image
             ;;
         *) # Handles all unknown parameter 
