@@ -207,7 +207,7 @@ function magic_reset_image_helper() {
     log "docker clean system from container and related data for \"${docker_image}\""
     docker_clean "$docker_image"
     log "Refresh files"
-    helper_git_download "https://github.com/Frickeldave/docker_${docker_image}" "docker_$docker_image"
+    helper_git_download "git@github.com:Frickeldave/docker_${docker_image}.git" "docker_$docker_image"
     log "docker build"
     docker_build "$docker_image" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
     log "start container"
@@ -230,7 +230,7 @@ function magic_default() {
     docker_clean_all
 
     log "download files needed for build process"
-    helper_git_download https://github.com/Frickeldave/docker_alpine "docker_alpine"
+    helper_git_download git@github.com:Frickeldave/docker_alpine.git "docker_alpine"
 
     log "docker build setup"
     docker_build_setup

@@ -119,15 +119,15 @@ function helper_git_download_all() {
     if [ $MC_NOUPDATE -eq 0 ]
     then
         log "start git update"
-        helper_git_download https://github.com/Frickeldave/docker_go "docker_go"
-        helper_git_download https://github.com/Frickeldave/docker_nginx "docker_nginx"
-        helper_git_download https://github.com/Frickeldave/docker_coredns "docker_coredns"
-        helper_git_download https://github.com/Frickeldave/docker_mariadb "docker_mariadb"
-        helper_git_download https://github.com/Frickeldave/docker_vault "docker_vault"
-        helper_git_download https://github.com/Frickeldave/docker_gitea "docker_gitea"
-        helper_git_download https://github.com/Frickeldave/docker_java "docker_java"
-        helper_git_download https://github.com/Frickeldave/docker_jenkins "docker_jenkins"
-        helper_git_download https://github.com/Frickeldave/docker_sambadc "docker_sambadc"
+        helper_git_download git@github.com:Frickeldave/docker_go.git "docker_go"
+        helper_git_download git@github.com:Frickeldave/docker_nginx.git "docker_nginx"
+        helper_git_download git@github.com:Frickeldave/docker_coredns.git "docker_coredns"
+        helper_git_download git@github.com:Frickeldave/docker_mariadb.git "docker_mariadb"
+        helper_git_download git@github.com:Frickeldave/docker_vault.git "docker_vault"
+        helper_git_download git@github.com:Frickeldave/docker_gitea.git "docker_gitea"
+        helper_git_download git@github.com:Frickeldave/docker_java.git "docker_java"
+        helper_git_download git@github.com:Frickeldave/docker_jenkins.git "docker_jenkins"
+        helper_git_download git@github.com:Frickeldave/docker_sambadc.git "docker_sambadc"
     else
         log "skip git update"
     fi
