@@ -183,14 +183,14 @@ services:
       context: ./../Leberkas
     image: #project#/leberkas:latest
     hostname: leberkas
-    dns: 172.6.66.100
+    dns: #corednsIPADDR#
     ports:
-      - "30104:30104"
+      - "#leberkasEXTPORT#:#leberkasINTPORT#"
     volumes:
       - leberkas-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: 172.6.66.109
+        ipv4_address: #leberkasIPADDR#
     environment:
       - NGX_ROLEID=#nginxROLEID#
       - NGX_PORT=#nginxINTPORT#
