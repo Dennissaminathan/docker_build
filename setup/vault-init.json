@@ -55,6 +55,13 @@
                 "CRTCOMMONNAME":"NGINX.FRICKELDAVE.MAGIC",
                 "IPADDR":"172.6.66.104"
             },
+            "leberkas": {
+                "ROLEID":"leberkasroleid",
+                "EXTPORT":"30113",
+                "INTPORT":"30113",
+                "CRTCOMMONNAME":"LEBERKAS.FRICKELDAVE.MAGIC",
+                "IPADDR":"172.6.66.113"
+            },
             "mariadb": {
                 "ROLEID":"mdbroleid",
                 "EXTPORT":"30103",
