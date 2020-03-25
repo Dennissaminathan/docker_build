@@ -192,21 +192,21 @@ services:
       appnet:
         ipv4_address: 172.6.66.109
     environment:
-      - NGX_ROLEID=nginxroleid
-      - NGX_PORT=30104
-      - DNS_IPADDR=172.6.66.100
-      - DNS_INITDOMAIN=frickeldave.magic
-      - VLT_PORT=30105
-      - GT_PORT=30106
-      - JKS_PORT=30107
-      - NXS_PORT=30108
-      - NXS_DOCKERPORT=58096
-      - CRT_VALIDITY=3650
-      - CRT_C=DE
-      - CRT_S=BAVARIAN
-      - CRT_L=HOERGERTSHAUSEN
-      - CRT_OU=LOCALDEV
-      - CRT_CN=NGINX.FRICKELDAVE.MAGIC
+      - NGX_ROLEID=#nginxROLEID#
+      - NGX_PORT=#nginxINTPORT#
+      - DNS_IPADDR=#corednsIPADDR#
+      - DNS_INITDOMAIN=#corednsINITDOMAIN#
+      - VLT_PORT=#vaultEXTPORT#
+      - GT_PORT=#giteaEXTPORT#
+      - JKS_PORT=#jenkinsEXTPORT#
+      - NXS_PORT=#nexusEXTPORT#
+      - NXS_DOCKERPORT=#nexusDOCKERPORT#
+      - CRT_VALIDITY=#certificatesVALIDITY#
+      - CRT_C=#certificatesCOUNTRY#
+      - CRT_S=#certificatesSTATE#
+      - CRT_L=#certificatesLOCATION#
+      - CRT_OU=#certificatesOU#
+      - CRT_CN=#nginxCRTCOMMONNAME#
   mariadb:
     build: 
       dockerfile: Dockerfile-mariadb
