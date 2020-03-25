@@ -57,8 +57,8 @@
             },
             "leberkas": {
                 "ROLEID":"leberkasroleid",
-                "EXTPORT":"30104",
-                "INTPORT":"30104",
+                "EXTPORT":"30109",
+                "INTPORT":"30109",
                 "CRTCOMMONNAME":"LEBERKAS.FRICKELDAVE.MAGIC",
                 "IPADDR":"172.6.66.109"
             },

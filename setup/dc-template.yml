@@ -192,14 +192,10 @@ services:
       appnet:
         ipv4_address: #leberkasIPADDR#
     environment:
-      - NGX_ROLEID=#nginxROLEID#
-      - NGX_PORT=#nginxINTPORT#
+      - NGX_ROLEID=#leberkasROLEID#
+      - LBK_PORT=#leberkasINTPORT#
       - DNS_IPADDR=#corednsIPADDR#
       - DNS_INITDOMAIN=#corednsINITDOMAIN#
-      - VLT_PORT=#vaultEXTPORT#
-      - GT_PORT=#giteaEXTPORT#
-      - JKS_PORT=#jenkinsEXTPORT#
-      - NXS_PORT=#nexusEXTPORT#
       - NXS_DOCKERPORT=#nexusDOCKERPORT#
       - CRT_VALIDITY=#certificatesVALIDITY#
       - CRT_C=#certificatesCOUNTRY#
