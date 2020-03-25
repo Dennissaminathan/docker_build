@@ -132,6 +132,7 @@ services:
       - DNS_IPADDR=#corednsIPADDR#
       - VLT_IPADDR=#vaultIPADDR#
       - NGX_IPADDR=#nginxIPADDR#
+      - LBK_IPADDR=#leberkasIPADDR#
       - MDB_IPADDR=#mariadbIPADDR#
       - DBV_IPADDR=#mariadbvaultIPADDR#
       - GT_IPADDR=#giteaIPADDR#
@@ -166,6 +167,7 @@ services:
       - DNS_INITDOMAIN=#corednsINITDOMAIN#
       - VLT_PORT=#vaultEXTPORT#
       - GT_PORT=#giteaEXTPORT#
+      - LBK_PORT=#leberkasEXTPORT#
       - JKS_PORT=#jenkinsEXTPORT#
       - NXS_PORT=#nexusEXTPORT#
       - NXS_DOCKERPORT=#nexusDOCKERPORT#
@@ -175,6 +177,36 @@ services:
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
       - CRT_CN=#nginxCRTCOMMONNAME#
+  leberkas:
+    build:
+      dockerfile: Dockerfile
+      context: ./../Leberkas
+    image: #project#/leberkas:latest
+    hostname: leberkas
+    dns: 172.6.66.100
+    ports:
+      - "30104:30104"
+    volumes:
+      - leberkas-data:/home/appuser/data
+    networks:
+      appnet:
+        ipv4_address: 172.6.66.109
+    environment:
+      - NGX_ROLEID=nginxroleid
+      - NGX_PORT=30104
+      - DNS_IPADDR=172.6.66.100
+      - DNS_INITDOMAIN=frickeldave.magic
+      - VLT_PORT=30105
+      - GT_PORT=30106
+      - JKS_PORT=30107
+      - NXS_PORT=30108
+      - NXS_DOCKERPORT=58096
+      - CRT_VALIDITY=3650
+      - CRT_C=DE
+      - CRT_S=BAVARIAN
+      - CRT_L=HOERGERTSHAUSEN
+      - CRT_OU=LOCALDEV
+      - CRT_CN=NGINX.FRICKELDAVE.MAGIC
   mariadb:
     build: 
       dockerfile: Dockerfile-mariadb
@@ -335,6 +367,7 @@ volumes:
   vault-data:
   coredns-data:
   nginx-data:
+  leberkas-data:
   mariadb-data:
   gitea-data:
   jenkins-data:
