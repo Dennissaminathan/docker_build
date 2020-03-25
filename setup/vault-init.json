@@ -74,7 +74,7 @@
                 "APPNAME":"Frickeldave gitea server",
                 "MYSQLADMINUSER":"adminmdb",
                 "MYSQLADMINPASSWORD":"frickeldave2go",
-                "MYSQLHOST":"mariadb",
+                "MYSQLHOST":"mariadb.frickeldave.magic",
                 "MYSQLPORT":"30103",
                 "MYSQLDB":"gitea",
                 "MYSQLUSERNAME":"gitea",
@@ -108,12 +108,38 @@
                 "CRTCOMMONNAME":"JENKINS.FRICKELDAVE.MAGIC",
                 "IPADDR":"172.6.66.107"
             },
+            "keycloak": {
+                "ROLEID":"keycloakroleid",
+                "AJPINTPORT":"30108",
+                "HTTPINTPORT":"30109",
+                "HTTPSINTPORT":"30110",
+                "MGNTHTTPINTPORT":"30111",
+                "MGNTHTTPSINTPORT":"30112",
+                "AJPEXTPORT":"30108",
+                "HTTPEXTPORT":"30109",
+                "HTTPSEXTPORT":"30110",
+                "MGNTHTTPEXTPORT":"30111",
+                "MGNTHTTPSEXTPORT":"30112",
+                "MYSQLADMINUSER":"adminmdb",
+                "MYSQLADMINPASSWORD":"frickeldave2go",
+                "MYSQLHOST":"mariadb.frickeldave.magic",
+                "MYSQLPORT":"30103",
+                "MYSQLDB":"keycloak",
+                "MYSQLUSERNAME":"keycloak",
+                "MYSQLPASSWORD":"keycloak2go",
+                "MYSQLHEALTHUSER":"healthstatus",
+                "MYSQLHEALTHPWD":"frickeldave2go",
+                "REMOVE_DB":"true",
+                "CRTCOMMONNAME":"KEYCLOAK.FRICKELDAVE.MAGIC",
+                "IPADDR":"172.6.66.108",
+                "CERTPWD":"frickeldave2go"
+            },
             "nexus": {
                 "ROLEID":"nexusroleid",
-                "EXTPORT":"30108",
-                "INTPORT":"30108",
+                "EXTPORT":"30114",
+                "INTPORT":"30114",
                 "DOCKERPORT":"58096",
-                "IPADDR":"172.6.66.108"
+                "IPADDR":"172.6.66.114"
             }
         }
     ]

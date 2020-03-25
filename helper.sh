@@ -200,5 +200,6 @@ function helper_usage() {
     echo "  vault          172.6.66.105     30105"
     echo "  gitea          172.6.66.106     30106"
     echo "  jenkins        172.6.66.107     30107"
-    echo "  nexus/docker   172.6.66.108     30108/58096"
+    echo "  keycloak       172.6.66.108     30108/30109/30110/30111/30112"
+    echo "  nexus/docker   172.6.66.114     30114/58096"
 }

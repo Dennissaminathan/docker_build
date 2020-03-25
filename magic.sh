@@ -17,50 +17,39 @@ function magic_main() {
     if [ $MC_STARTALL -eq 1 ]
     then 
         magic_start_all
-        log "Finished"
-        exit 0
-    fi
 
-    if [ ! "$MC_RESETIMAGE" == "0" ]
+    elif [ ! "$MC_RESETIMAGE" == "0" ]
     then 
         log "test internet"
         helper_test_internet
 
         magic_reset_image $MC_RESETIMAGE
-        log "Finished"
-        exit 0
-    fi
 
-    if [ ! "$MC_STARTIMAGE" == "0" ]
+    elif [ ! "$MC_STARTIMAGE" == "0" ]
     then 
         log "test internet"
         helper_test_internet
 
         magic_start_image $MC_STARTIMAGE
-        log "Finished"
-        exit 0
-    fi
-    
-    if [ $MC_RESETALL -eq 1 ]
+
+    elif [ $MC_RESETALL -eq 1 ]
     then 
         log "test internet"
         helper_test_internet
 
-        magic_default $@
-        log "Finished"
+        magic_reset_all $@
 
         log "Please make sure, that you added the following entries to yout hosts file:"
         log "   - 127.0.0.1   frickeldave.magic"
         log "   - 127.0.0.1   gitea.frickeldave.magic"
         log "   - 127.0.0.1   jenkins.frickeldave.magic"
         log "   - 127.0.0.1   nexus.frickeldave.magic"
+        log "   - 127.0.0.1	  docker.frickeldave.magic"
+        log "   - 127.0.0.1	  keycloak.frickeldave.magic"
         log "   - 127.0.0.1	  vault.frickeldave.magic"
-
-        exit 0
+    else
+        log "No action selected."
     fi
-    
-    log "No action selected."
-
 }
 
 function magic_start_all() {
@@ -123,6 +112,9 @@ function magic_reset_image() {
             magic_reset_image_helper $docker_image
             ;;
         jenkins)
+            magic_reset_image_helper $docker_image
+            ;;
+        keycloak)
             magic_reset_image_helper $docker_image
             ;;
         *) # Handles all unknown parameter 
@@ -188,6 +180,9 @@ function magic_start_image() {
         jenkins)
             magic_start_image_helper $docker_image
             ;;
+        keycloak)
+            magic_start_image_helper $docker_image
+            ;;
         *) # Handles all unknown parameter 
             log "   Ignoring unsupported docker image \"$docker_image\""
             ;;
@@ -218,7 +213,7 @@ function magic_start_image_helper() {
 	docker_start $docker_image
 }
 
-function magic_default() {
+function magic_reset_all() {
 
     log "docker clean all"
     docker_clean_all
@@ -270,3 +265,7 @@ function magic_default() {
 }
 
 magic_main $@
+
+finishtime=`date +%Y-%m-%d_%H:%M:%S`
+log "Finished at \"$finishtime\""
+

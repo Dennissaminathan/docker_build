@@ -136,6 +136,7 @@ services:
       - DBV_IPADDR=#mariadbvaultIPADDR#
       - GT_IPADDR=#giteaIPADDR#
       - JKS_IPADDR=#jenkinsIPADDR#
+      - KC_IPADDR=#keycloakIPADDR#
       - NXS_IPADDR=#nexusIPADDR#
       - DCR_IPADDR=#nexusIPADDR#
   nginx:
@@ -166,6 +167,8 @@ services:
       - VLT_PORT=#vaultEXTPORT#
       - GT_PORT=#giteaEXTPORT#
       - JKS_PORT=#jenkinsEXTPORT#
+      - KC_PORT=#keycloakHTTPSEXTPORT#
+      - KC_MGMTPORT=#keycloakMGNTHTTPSEXTPORT#
       - NXS_PORT=#nexusEXTPORT#
       - NXS_DOCKERPORT=#nexusDOCKERPORT#
       - CRT_VALIDITY=#certificatesVALIDITY#
@@ -292,6 +295,55 @@ services:
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
       - CRT_CN=#jenkinsCRTCOMMONNAME#
+  keycloak:
+    build: 
+      dockerfile: Dockerfile-keycloak
+      context: ./../docker_keycloak
+    image: #project#/keycloak:latest
+    hostname: keycloak
+    restart: "no"
+    dns: #corednsIPADDR#
+    ports:
+    - "#keycloakAJPEXTPORT#:#keycloakAJPINTPORT#"
+    - "#keycloakHTTPINTPORT#:#keycloakHTTPEXTPORT#"
+    - "#keycloakHTTPSINTPORT#:#keycloakHTTPSEXTPORT#"
+    - "#keycloakMGNTHTTPINTPORT#:#keycloakMGNTHTTPEXTPORT#"
+    - "#keycloakMGNTHTTPSINTPORT#:#keycloakMGNTHTTPSEXTPORT#"
+    volumes:
+      - keycloak-data:/home/appuser/data
+    networks:
+      appnet:
+        ipv4_address: #keycloakIPADDR#
+    healthcheck:
+      test: "curl --fail https://localhost:#keycloakHTTPSINTPORT# --insecure || false"
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - KC_ROLEID=#keycloakROLEID#
+      - KC_AJPINTPORT=#keycloakAJPINTPORT#
+      - KC_HTTPINTPORT=#keycloakHTTPINTPORT#
+      - KC_HTTPSINTPORT=#keycloakHTTPSINTPORT#
+      - KC_MGNTHTTPINTPORT=#keycloakMGNTHTTPINTPORT#
+      - KC_MGNTHTTPSINTPORT=#keycloakMGNTHTTPSINTPORT#
+      - KC_MYSQLADMINUSER=#keycloakMYSQLADMINUSER#
+      - KC_MYSQLADMINPASSWORD=#keycloakMYSQLADMINPASSWORD#
+      - KC_MYSQLHOST=#keycloakMYSQLHOST#
+      - KC_MYSQLPORT=#keycloakMYSQLPORT#
+      - KC_MYSQLDB=#keycloakMYSQLDB#
+      - KC_MYSQLUSERNAME=#keycloakMYSQLUSERNAME#
+      - KC_MYSQLPASSWORD=#keycloakMYSQLPASSWORD#
+      - KC_MYSQLHEALTHUSER=#keycloakMYSQLHEALTHUSER#
+      - KC_MYSQLHEALTHPWD=#keycloakMYSQLHEALTHPWD#
+      - KC_BINDADDRESS=#keycloakIPADDR#
+      - KC_REMOVE_DB=#keycloakREMOVE_DB#
+      - KC_CERTPWD=#keycloakCERTPWD#
+      - CRT_VALIDITY=#certificatesVALIDITY#
+      - CRT_C=#certificatesCOUNTRY#
+      - CRT_S=#certificatesSTATE#
+      - CRT_L=#certificatesLOCATION#
+      - CRT_OU=#certificatesOU#
+      - CRT_CN=#keycloakCRTCOMMONNAME#
 networks:
   appnet:
     ipam:
@@ -306,3 +358,4 @@ volumes:
   mariadb-data:
   gitea-data:
   jenkins-data:
+  keycloak-data:

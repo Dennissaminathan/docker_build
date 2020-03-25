@@ -18,6 +18,7 @@ function docker_clean_all() {
 	docker_clean "jre8"
 	docker_clean "jdk8"
 	docker_clean "jenkins"
+	docker_clean "keycloak"
 
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
@@ -73,7 +74,7 @@ function docker_build_all() {
 	docker_build "jdk11" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 	docker_build "jre11" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 	docker_build "jenkins" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
-
+	docker_build "keycloak" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
@@ -114,6 +115,8 @@ function docker_start_all() {
 	docker_start "gitea"
 	log "start jenkins"
 	docker_start "jenkins"
+	log "start keycloak"
+	docker_start "keycloak"
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
