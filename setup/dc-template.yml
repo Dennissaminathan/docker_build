@@ -132,6 +132,7 @@ services:
       - DNS_IPADDR=#corednsIPADDR#
       - VLT_IPADDR=#vaultIPADDR#
       - NGX_IPADDR=#nginxIPADDR#
+      - LBK_IPADDR=#leberkasIPADDR#
       - MDB_IPADDR=#mariadbIPADDR#
       - DBV_IPADDR=#mariadbvaultIPADDR#
       - GT_IPADDR=#giteaIPADDR#
@@ -166,10 +167,37 @@ services:
       - DNS_INITDOMAIN=#corednsINITDOMAIN#
       - VLT_PORT=#vaultEXTPORT#
       - GT_PORT=#giteaEXTPORT#
+      - LBK_PORT=#leberkasEXTPORT#
       - JKS_PORT=#jenkinsEXTPORT#
       - KC_PORT=#keycloakHTTPSEXTPORT#
       - KC_MGMTPORT=#keycloakMGNTHTTPSEXTPORT#
       - NXS_PORT=#nexusEXTPORT#
+      - NXS_DOCKERPORT=#nexusDOCKERPORT#
+      - CRT_VALIDITY=#certificatesVALIDITY#
+      - CRT_C=#certificatesCOUNTRY#
+      - CRT_S=#certificatesSTATE#
+      - CRT_L=#certificatesLOCATION#
+      - CRT_OU=#certificatesOU#
+      - CRT_CN=#nginxCRTCOMMONNAME#
+  leberkas:
+    build:
+      dockerfile: Dockerfile
+      context: ./../Leberkas
+    image: #project#/leberkas:latest
+    hostname: leberkas
+    dns: #corednsIPADDR#
+    ports:
+      - "#leberkasEXTPORT#:#leberkasINTPORT#"
+    volumes:
+      - leberkas-data:/home/appuser/data
+    networks:
+      appnet:
+        ipv4_address: #leberkasIPADDR#
+    environment:
+      - NGX_ROLEID=#leberkasROLEID#
+      - LBK_PORT=#leberkasINTPORT#
+      - DNS_IPADDR=#corednsIPADDR#
+      - DNS_INITDOMAIN=#corednsINITDOMAIN#
       - NXS_DOCKERPORT=#nexusDOCKERPORT#
       - CRT_VALIDITY=#certificatesVALIDITY#
       - CRT_C=#certificatesCOUNTRY#
@@ -355,6 +383,7 @@ volumes:
   vault-data:
   coredns-data:
   nginx-data:
+  leberkas-data:
   mariadb-data:
   gitea-data:
   jenkins-data:

@@ -105,6 +105,9 @@ function magic_reset_image() {
         nginx)
             magic_reset_image_helper $docker_image
             ;;
+        leberkas)
+            magic_reset_image_helper $docker_image
+            ;;
         coredns)
             magic_reset_image_helper $docker_image
             ;;
