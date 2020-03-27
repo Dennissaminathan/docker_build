@@ -343,7 +343,7 @@ services:
       appnet:
         ipv4_address: #keycloakIPADDR#
     healthcheck:
-      test: "curl --fail https://localhost:#keycloakHTTPSINTPORT# --insecure || false"
+      test: "curl --fail https://#keycloakIPADDR#:#keycloakHTTPSINTPORT# --insecure || false"
       interval: 5s
       timeout: 10s
       retries: 3
@@ -366,6 +366,9 @@ services:
       - KC_BINDADDRESS=#keycloakIPADDR#
       - KC_REMOVE_DB=#keycloakREMOVE_DB#
       - KC_CERTPWD=#keycloakCERTPWD#
+      - KC_URL=#keycloakURL#
+      - KC_ADMINUSER=#keycloakADMINUSER#
+      - KC_ADMINPWD=#keycloakADMINPWD#
       - CRT_VALIDITY=#certificatesVALIDITY#
       - CRT_C=#certificatesCOUNTRY#
       - CRT_S=#certificatesSTATE#

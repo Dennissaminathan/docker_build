@@ -137,9 +137,12 @@
                 "MYSQLHEALTHUSER":"healthstatus",
                 "MYSQLHEALTHPWD":"frickeldave2go",
                 "REMOVE_DB":"true",
+                "URL":"https://keycloak.frickeldave.magic",
                 "CRTCOMMONNAME":"KEYCLOAK.FRICKELDAVE.MAGIC",
                 "IPADDR":"172.6.66.108",
-                "CERTPWD":"frickeldave2go"
+                "CERTPWD":"frickeldave2go",
+                "ADMINUSER":"frickeldave_admin",
+                "ADMINPWD":"frickeldave2go"
             },
             "nexus": {
                 "ROLEID":"nexusroleid",

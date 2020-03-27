@@ -204,6 +204,11 @@ function magic_reset_image_helper() {
     docker_build "$docker_image" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
     log "start container"
 	docker_start $docker_image
+
+    if [ $MC_LOGSTART == 1 ]
+    then 
+        docker logs ${MC_PROJECT}_${docker_image}_1 --follow
+    fi
 }
 
 function magic_start_image_helper() {
