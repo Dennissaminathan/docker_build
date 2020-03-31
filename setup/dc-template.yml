@@ -369,6 +369,10 @@ services:
       - KC_URL=#keycloakURL#
       - KC_ADMINUSER=#keycloakADMINUSER#
       - KC_ADMINPWD=#keycloakADMINPWD#
+      - KC_CREATEINITREALM=#keycloakCREATEINITREALM#
+      - KC_INITREALM=#keycloakINITREALM#
+      - KC_INITUSERMAILDOMAIN=#keycloakINITUSERMAILDOMAIN#
+      - KC_INITUSERPASSWORD=#keycloakINITUSERPASSWORD#
       - CRT_VALIDITY=#certificatesVALIDITY#
       - CRT_C=#certificatesCOUNTRY#
       - CRT_S=#certificatesSTATE#

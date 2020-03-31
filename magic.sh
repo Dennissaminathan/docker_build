@@ -64,8 +64,7 @@ function magic_reset_image() {
 
     case $docker_image in
         alpine)
-            log "single rebuild not supported, run magic.sh without params"
-            exit 0
+            magic_reset_image_helper $docker_image
             ;;
         vault)
             log "single rebuild not supported, run magic.sh without params"
@@ -199,7 +198,17 @@ function magic_reset_image_helper() {
     log "docker clean system from container and related data for \"${docker_image}\""
     docker_clean "$docker_image"
     log "Refresh files"
-    helper_git_download "https://github.com/Frickeldave/docker_${docker_image}" "docker_$docker_image"
+    
+    case $docker_image in
+            Leberkas) 
+                helper_git_download "https://github.com/Frickeldave/${docker_image}" "$docker_image"
+                exit 0
+                ;;
+            *) # Handles alldocker git repos
+                helper_git_download "https://github.com/Frickeldave/docker_${docker_image}" "docker_$docker_image"
+                ;;
+        esac
+        shift
     log "docker build"
     docker_build "$docker_image" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
     log "start container"

@@ -142,7 +142,11 @@
                 "IPADDR":"172.6.66.108",
                 "CERTPWD":"frickeldave2go",
                 "ADMINUSER":"frickeldave_admin",
-                "ADMINPWD":"frickeldave2go"
+                "ADMINPWD":"frickeldave2go",
+                "CREATEINITREALM":"true",
+                "INITREALM":"frickeldave",
+                "INITUSERMAILDOMAIN":"frickeldave.global",
+                "INITUSERPASSWORD":"frickeldave2go"
             },
             "nexus": {
                 "ROLEID":"nexusroleid",
