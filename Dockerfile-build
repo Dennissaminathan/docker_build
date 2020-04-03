@@ -1,8 +1,8 @@
-FROM frickeldave/alpine:latest
+FROM #MC_PROJECT#/alpine:latest
 
-LABEL MAINTAINER="David Koenig <dave@frickeldave.de>"
+LABEL MAINTAINER="David Koenig"
 
-ARG IMAGE_NAME=frickeldave/build
+ARG IMAGE_NAME=#MC_PROJECT#/build
 ARG IMAGE_VERSION=1.1
 
 ADD setup/vault-init.json /home/appuser/app/vault-init.json

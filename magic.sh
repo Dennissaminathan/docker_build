@@ -39,14 +39,14 @@ function magic_main() {
 
         magic_reset_all $@
 
-        log "Please make sure, that you added the following entries to yout hosts file:"
-        log "   - 127.0.0.1   frickeldave.magic"
-        log "   - 127.0.0.1   gitea.frickeldave.magic"
-        log "   - 127.0.0.1   jenkins.frickeldave.magic"
-        log "   - 127.0.0.1   nexus.frickeldave.magic"
-        log "   - 127.0.0.1	  docker.frickeldave.magic"
-        log "   - 127.0.0.1	  keycloak.frickeldave.magic"
-        log "   - 127.0.0.1	  vault.frickeldave.magic"
+    elif [ $MC_CLEANALL -eq 1 ]
+    then 
+        log "test internet"
+        helper_test_internet
+
+        magic_clean_all $@
+
+        docker system prune -f
     else
         log "No action selected."
     fi
@@ -198,17 +198,8 @@ function magic_reset_image_helper() {
     log "docker clean system from container and related data for \"${docker_image}\""
     docker_clean "$docker_image"
     log "Refresh files"
-    
-    case $docker_image in
-            Leberkas) 
-                helper_git_download "https://github.com/Frickeldave/${docker_image}" "$docker_image"
-                exit 0
-                ;;
-            *) # Handles alldocker git repos
-                helper_git_download "https://github.com/Frickeldave/docker_${docker_image}" "docker_$docker_image"
-                ;;
-        esac
-        shift
+    helper_git_download "${MC_GITURL}/docker_${docker_image}" "docker_$docker_image"
+
     log "docker build"
     docker_build "$docker_image" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
     log "start container"
@@ -236,7 +227,7 @@ function magic_reset_all() {
     docker_clean_all
 
     log "download files needed for build process"
-    helper_git_download https://github.com/Frickeldave/docker_alpine "docker_alpine"
+    helper_git_download ${MC_GITURL}/docker_alpine "docker_alpine"
 
     log "docker build setup"
     docker_build_setup
@@ -279,6 +270,13 @@ function magic_reset_all() {
 
     log "docker start all"
     docker_start_all
+}
+
+function magic_clean_all() {
+
+    log "docker clean all"
+    docker_clean_all
+
 }
 
 magic_main $@

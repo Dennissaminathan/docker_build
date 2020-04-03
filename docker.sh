@@ -28,23 +28,27 @@ function docker_build_setup() {
 
 	MC_LOGINDENT=$((MC_LOGINDENT+3))
 
+	log "Create docker-compose-setupbuild.yml to create initial build containers"
 	echo "version: "\'"3.7"\'"" > "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 
 	echo "services:" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
   	echo "  alpine:" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
     echo "    build:" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
-	echo "      dockerfile: Dockerfile-alpine" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
+	echo "      dockerfile: Dockerfile-alpine-runtime" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 	echo "      context: ./../docker_alpine" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 	echo "    image: ${MC_PROJECT}/alpine:latest" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
   	echo "  build:" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
     echo "    build:" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
-	echo "      dockerfile: Dockerfile-build" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
+	echo "      dockerfile: Dockerfile-build-runtime" >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 	echo "      context: ." >> "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 	echo "    image: ${MC_PROJECT}/build:latest"   >> "${MC_WORKDIR}/docker-compose-setupbuild.yml" 
 
+	log "Build \"alpine\" image"
 	docker_build "alpine" "${MC_WORKDIR}/docker-compose-setupbuild.yml"
+	log "Build \"build\" image"
 	docker_build "build" "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 
+	log "delete temporary files"
 	rm -f "${MC_WORKDIR}/docker-compose-setupbuild.yml"
 
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
@@ -172,26 +176,32 @@ function docker_build() {
 
 	MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-	log "(Re-)build image $container_name"
-	if [ "$file_name" == "" ]
-	then 
-		if [ $MC_LOGBUILD -eq 1 ]
-		then 
-			log "docker-compose output enabled"; docker-compose build "$container_name"
-		else 
-			log "docker-compose output disabled"; docker-compose build "$container_name" > /dev/null 2>&1; 
-		fi
-		ret=$?
-	else
-		log "Use file: $file_name"
-		if [ $MC_LOGBUILD -eq 1 ]
-		then 
-			log "docker-compose output enabled"; docker-compose -f "$file_name" build "$container_name"
-		else 
-			log "docker-compose output disabled"; docker-compose -f "$file_name" build "$container_name" > /dev/null 2>&1;
-		fi
-		ret=$?
+	log "(Re-)build image \"$container_name\""
+
+	local folder_name=${container_name}
+
+	if [ "${container_name}" = "jre8" ] || [ "${container_name}" = "jdk8" ] || [ "${container_name}" = "jre11" ] || [ "${container_name}" = "jdk11" ] # Special handling for java
+	then
+		folder_name="java"
 	fi
+
+	echo "Create runtime copy of Dockerfile for container image \"$container_name\""
+	cp -f "${MC_WORKDIR}/../docker_${folder_name}/Dockerfile-${container_name}" "${MC_WORKDIR}/../docker_${folder_name}/Dockerfile-${container_name}-runtime"
+
+	echo "Patch Dockerfile for container image \"$container_name\""
+	sed -i -e "s/#MC_PROJECT#/${MC_PROJECT}/g" "${MC_WORKDIR}/../docker_${folder_name}/Dockerfile-${container_name}-runtime"
+
+	log "Use file: $file_name"
+	if [ $MC_LOGBUILD -eq 1 ]
+	then 
+		log "docker-compose output enabled"; docker-compose -f "${file_name}" build "${container_name}"
+	else 
+		log "docker-compose output disabled"; docker-compose -f "${file_name}" build "${container_name}" > /dev/null 2>&1;
+	fi
+	ret=$?
+
+	rm -f "${MC_WORKDIR}/../docker_${folder_name}/Dockerfile-${container_name}-runtime"
+
 	if [ "$ret" == "0" ]
 	then
 		log "success"

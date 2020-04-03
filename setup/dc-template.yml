@@ -3,12 +3,12 @@ version: '3.7'
 services:
   alpine:
     build: 
-      dockerfile: Dockerfile-alpine
+      dockerfile: Dockerfile-alpine-runtime
       context: ./../docker_alpine
     image: #project#/alpine:latest
   build:
     build: 
-      dockerfile: Dockerfile-build
+      dockerfile: Dockerfile-build-runtime
       context: .
     image: #project#/build:latest  
   mariadbvault:
@@ -41,32 +41,32 @@ services:
       - MDB_CHARACTERSET=#mariadbvaultCHARACTERSET#
   go:
     build: 
-      dockerfile: Dockerfile-go
+      dockerfile: Dockerfile-go-runtime
       context: ./../docker_go
     image: #project#/go:latest
   jre8:
     build: 
-      dockerfile: Dockerfile-jre8
-      context: ./../docker_java/jre8
+      dockerfile: Dockerfile-jre8-runtime
+      context: ./../docker_java
     image: #project#/jre8:latest
   jdk8:
     build: 
-      dockerfile: Dockerfile-jdk8
-      context: ./../docker_java/jdk8
+      dockerfile: Dockerfile-jdk8-runtime
+      context: ./../docker_java
     image: #project#/jdk8:latest
   jre11:
     build: 
-      dockerfile: Dockerfile-jre11
-      context: ./../docker_java/jre11
+      dockerfile: Dockerfile-jre11-runtime
+      context: ./../docker_java
     image: #project#/jre11:latest
   jdk11:
     build: 
-      dockerfile: Dockerfile-jdk11
-      context: ./../docker_java/jdk11
+      dockerfile: Dockerfile-jdk11-runtime
+      context: ./../docker_java
     image: #project#/jdk11:latest
   vault:
     build: 
-      dockerfile: Dockerfile-vault
+      dockerfile: Dockerfile-vault-runtime
       context: ./../docker_vault
     image: #project#/vault:latest
     hostname: vault
@@ -108,7 +108,7 @@ services:
       - CRT_CN=#vaultCRTCOMMONNAME#
   coredns:
     build: 
-      dockerfile: Dockerfile-coredns
+      dockerfile: Dockerfile-coredns-runtime
       context: ./../docker_coredns
     image: #project#/coredns:latest
     hostname: coredns
@@ -142,7 +142,7 @@ services:
       - DCR_IPADDR=#nexusIPADDR#
   nginx:
     build: 
-      dockerfile: Dockerfile-nginx
+      dockerfile: Dockerfile-nginx-runtime
       context: ./../docker_nginx
     image: #project#/nginx:latest
     hostname: nginx
@@ -181,8 +181,8 @@ services:
       - CRT_CN=#nginxCRTCOMMONNAME#
   leberkas:
     build:
-      dockerfile: Dockerfile
-      context: ./../Leberkas
+      dockerfile: Dockerfile-leberkas-runtime
+      context: ./../docker_leberkas
     image: #project#/leberkas:latest
     hostname: leberkas
     dns: #corednsIPADDR#
@@ -207,7 +207,7 @@ services:
       - CRT_CN=#nginxCRTCOMMONNAME#
   mariadb:
     build: 
-      dockerfile: Dockerfile-mariadb
+      dockerfile: Dockerfile-mariadb-runtime
       context: ./../docker_mariadb
     image: #project#/mariadb:latest
     hostname: mariadb
@@ -221,7 +221,7 @@ services:
       appnet:
         ipv4_address: #mariadbIPADDR#
     healthcheck:
-      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#project#2go -P #mariadbINTPORT#"
+      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#mariadbHEALTHPWD# -P #mariadbINTPORT#"
       interval: 5s
       timeout: 10s
       retries: 3
@@ -238,7 +238,7 @@ services:
       - MDB_CHARACTERSET=#mariadbCHARACTERSET#
   gitea:
     build: 
-      dockerfile: Dockerfile-gitea
+      dockerfile: Dockerfile-gitea-runtime
       context: ./../docker_gitea
     image: #project#/gitea:latest
     hostname: gitea
@@ -290,7 +290,7 @@ services:
       - CRT_CN=#giteaCRTCOMMONNAME#
   jenkins:
     build: 
-      dockerfile: Dockerfile-jenkins
+      dockerfile: Dockerfile-jenkins-runtime
       context: ./../docker_jenkins
     image: #project#/jenkins:latest
     hostname: jenkins
@@ -325,7 +325,7 @@ services:
       - CRT_CN=#jenkinsCRTCOMMONNAME#
   keycloak:
     build: 
-      dockerfile: Dockerfile-keycloak
+      dockerfile: Dockerfile-keycloak-runtime
       context: ./../docker_keycloak
     image: #project#/keycloak:latest
     hostname: keycloak
@@ -366,7 +366,6 @@ services:
       - KC_BINDADDRESS=#keycloakIPADDR#
       - KC_REMOVE_DB=#keycloakREMOVE_DB#
       - KC_CERTPWD=#keycloakCERTPWD#
-      - KC_URL=#keycloakURL#
       - KC_ADMINUSER=#keycloakADMINUSER#
       - KC_ADMINPWD=#keycloakADMINPWD#
       - KC_CREATEINITREALM=#keycloakCREATEINITREALM#

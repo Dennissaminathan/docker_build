@@ -15,21 +15,23 @@ function helper_set_variables() {
     # Static poroperties
     MC_LOG=1
     MC_LOGINDENT=0
+    MC_GITURL=https://github.com/Frickeldave
 
     #Properties overwritten by input parameters
     MC_STARTALL=0
     MC_RESETALL=0
+    MC_CLEANALL=0
     MC_RESETIMAGE=0
     MC_STARTIMAGE=0
     MC_NOUPDATE=0
     MC_LOGBUILD=0
     MC_LOGSTART=0
 
-    # Certificate proerties overwritten by configuration file
+    # Certificate properties overwritten by configuration file
     MC_CRTVALIDITY="3650"
     MC_CRTCOUNTRY="DE"
     MC_CRTSTATE="BAVARIAN"
-    MC_CRTLOCATION="HOERGERTSHAUSEN"
+    MC_CRTLOCATION="ISMANING"
     MC_CRTOU="LOCALDEV"
 
     # TODO: Die MC_VAULT* Variablen müssen in die vault-init.json Datein übernommen werden.
@@ -79,6 +81,9 @@ function helper_parse_parameter() {
             --reset-all)
                 MC_RESETALL=1
                 ;;
+            --clean-all)
+                MC_CLEANALL=1
+                ;;
             --reset-image)
                 MC_RESETIMAGE=$value
                 ;;
@@ -103,6 +108,7 @@ function helper_parse_parameter() {
 
     log "MC_PROJECT=$MC_PROJECT"
     log "MC_RESETALL=$MC_RESETALL"
+    log "MC_CLEANALL=$MC_CLEANALL"
     log "MC_RESETIMAGE=$MC_RESETIMAGE"
     log "MC_LOGBUILD=$MC_LOGBUILD"
     log "MC_LOGSTART=$MC_LOGSTART"
@@ -119,15 +125,15 @@ function helper_git_download_all() {
     if [ $MC_NOUPDATE -eq 0 ]
     then
         log "start git update"
-        helper_git_download https://github.com/Frickeldave/docker_go "docker_go"
-        helper_git_download https://github.com/Frickeldave/docker_nginx "docker_nginx"
-        helper_git_download https://github.com/Frickeldave/Leberkas "Leberkas"
-        helper_git_download https://github.com/Frickeldave/docker_coredns "docker_coredns"
-        helper_git_download https://github.com/Frickeldave/docker_mariadb "docker_mariadb"
-        helper_git_download https://github.com/Frickeldave/docker_vault "docker_vault"
-        helper_git_download https://github.com/Frickeldave/docker_gitea "docker_gitea"
-        helper_git_download https://github.com/Frickeldave/docker_java "docker_java"
-        helper_git_download https://github.com/Frickeldave/docker_jenkins "docker_jenkins"
+        helper_git_download ${MC_GITURL}/docker_go "docker_go"
+        helper_git_download ${MC_GITURL}/docker_nginx "docker_nginx"
+        helper_git_download ${MC_GITURL}/docker_leberkas "docker_leberkas"
+        helper_git_download ${MC_GITURL}/docker_coredns "docker_coredns"
+        helper_git_download ${MC_GITURL}/docker_mariadb "docker_mariadb"
+        helper_git_download ${MC_GITURL}/docker_vault "docker_vault"
+        helper_git_download ${MC_GITURL}/docker_gitea "docker_gitea"
+        helper_git_download ${MC_GITURL}/docker_java "docker_java"
+        helper_git_download ${MC_GITURL}/docker_jenkins "docker_jenkins"
     else
         log "skip git update"
     fi
@@ -173,6 +179,7 @@ function helper_git_download() {
     else
         log "git update disabled"
     fi
+
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
@@ -185,23 +192,44 @@ function helper_usage() {
     echo " --project=<PROJECTNAME>        Mandatory. The projectname defines containername, imagename, filename, ..."
     echo " --start-all                    Start all container. \"--reset-all\" must be executed before."
     echo " --reset-all                    Renew all images. When images with same projectname exist, they will be deleted."
+    echo " --clean-all                    Remove all project related images."
     echo " --reset-image=<IMAGENAME>      Reset/rebuild a single image."
     echo " --start-image=<IMAGENAME>      Start or restart a single image."
     echo " --no-update                    Prevents the update of the git repos."
     echo " --logbuild                     The output of \"docker-compose build\" is shown."
     echo " --logstart                     The output of \"docker-compose up\" is shown."
     echo ""
+    echo ""
+    echo "Please make sure, that you added the following entries to your hosts file under"
+    echo "  c:\windows\system32\drivers\etc"
+    echo ""
+    echo "   - 127.0.0.1   ${MC_PROJECT}.magic"
+    echo "   - 127.0.0.1   gitea.${MC_PROJECT}.magic"
+    echo "   - 127.0.0.1   jenkins.${MC_PROJECT}.magic"
+    echo "   - 127.0.0.1   nexus.${MC_PROJECT}.magic"
+    echo "   - 127.0.0.1   docker.${MC_PROJECT}.magic"
+    echo "   - 127.0.0.1   keycloak.${MC_PROJECT}.magic"
+    echo "   - 127.0.0.1   vault.${MC_PROJECT}.magic"
+    echo ""
+    echo ""
     echo "Servers and ports"
+    echo ""
     echo "  name         ip address         ports"
     echo "-----------------------------------------"
     echo "  coredns        172.6.66.100     53"
     echo "  mariadbvault   172.6.66.102     30102"
     echo "  mariadb        172.6.66.103     30103"
     echo "  nginx          172.6.66.104     30104"
-    echo "  Leberkas       172.6.66.109     30104"
+    echo "  Leberkas       172.6.66.109     30109"
     echo "  vault          172.6.66.105     30105"
     echo "  gitea          172.6.66.106     30106"
     echo "  jenkins        172.6.66.107     30107"
     echo "  keycloak       172.6.66.108     30108/30109/30110/30111/30112"
     echo "  nexus/docker   172.6.66.114     30114/58096"
+    echo ""
+    echo ""
+    echo "Additional hints"
+    echo ""
+    echo " - This will not work when you use proxies which break your SSL connection (eg. ZSCaler)"
+    echo ""
 }
