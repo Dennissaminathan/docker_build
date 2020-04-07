@@ -134,6 +134,7 @@ function helper_git_download_all() {
         helper_git_download ${MC_GITURL}/docker_gitea "docker_gitea"
         helper_git_download ${MC_GITURL}/docker_java "docker_java"
         helper_git_download ${MC_GITURL}/docker_jenkins "docker_jenkins"
+        helper_git_download ${MC_GITURL}/docker_keycloak "docker_keycloak"
     else
         log "skip git update"
     fi
