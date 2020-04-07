@@ -10,7 +10,6 @@
         {
             "mariadbvault": {
                 "ROLEID":"mdbvaultroleid",
-                "EXTPORT":"30102",
                 "INTPORT":"30102",
                 "ROOTPWD":"dogchain2go",
                 "ADMINUSER":"adminmdb",
@@ -34,7 +33,6 @@
                 "MYSQLHEALTHUSER":"healthstatus",
                 "MYSQLHEALTHPWD":"dogchain2go",
                 "IPADDRESS":"0.0.0.0",
-                "EXTPORT":"30105",
                 "INTPORT":"30105",
                 "REMOVE_DB":"true",
                 "CRTCOMMONNAME":"VAULT.DOGCHAIN.GO",
@@ -42,7 +40,6 @@
             },
             "coredns": {
                 "ROLEID":"corednsroleid",
-                "EXTPORT":"53",
                 "INTPORT":"53",
                 "INITDOMAIN":"dogchain.go",
                 "DIGADDRESS":"dogchain.go",
@@ -51,20 +48,18 @@
             "nginx": {
                 "ROLEID":"nginxroleid",
                 "EXTPORT":"443",
-                "INTPORT":"30104",
+                "INTPORT":"443",
                 "CRTCOMMONNAME":"NGINX.DOGCHAIN.GO",
                 "IPADDR":"172.6.66.104"
             },
             "leberkas": {
                 "ROLEID":"leberkasroleid",
-                "EXTPORT":"30113",
                 "INTPORT":"30113",
                 "CRTCOMMONNAME":"LEBERKAS.DOGCHAIN.GO",
                 "IPADDR":"172.6.66.113"
             },
             "mariadb": {
                 "ROLEID":"mdbroleid",
-                "EXTPORT":"30103",
                 "INTPORT":"30103",
                 "ROOTPWD":"dogchain2go",
                 "ADMINUSER":"adminmdb",
@@ -89,7 +84,6 @@
                 "MYSQLHEALTHUSER":"healthstatus",
                 "MYSQLHEALTHPWD":"dogchain2go",
                 "PROTOCOL":"https",
-                "EXTPORT":"30106",
                 "INTPORT":"30106",
                 "INITIALADMIN":"fallbackadmin",
                 "INITIALADMINPWD":"dogchain2go",
@@ -108,7 +102,6 @@
             "jenkins": {
                 "ROLEID":"jenkinsroleid",
                 "CERTPWD":"dogchain2go",
-                "EXTPORT":"30107",
                 "INTPORT":"30107",                
                 "MAIL":"jenkins@dgchain.go",
                 "URL":"jenkins.dogchain.go",
@@ -123,11 +116,6 @@
                 "HTTPSINTPORT":"30110",
                 "MGNTHTTPINTPORT":"30111",
                 "MGNTHTTPSINTPORT":"30112",
-                "AJPEXTPORT":"30108",
-                "HTTPEXTPORT":"30109",
-                "HTTPSEXTPORT":"30110",
-                "MGNTHTTPEXTPORT":"30111",
-                "MGNTHTTPSEXTPORT":"30112",
                 "MYSQLADMINUSER":"adminmdb",
                 "MYSQLADMINPASSWORD":"dogchain2go",
                 "MYSQLHOST":"mariadb.dogchain.go",
@@ -150,7 +138,6 @@
             },
             "nexus": {
                 "ROLEID":"nexusroleid",
-                "EXTPORT":"30114",
                 "INTPORT":"30114",
                 "DOCKERPORT":"58096",
                 "IPADDR":"172.6.66.114"
