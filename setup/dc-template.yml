@@ -358,6 +358,32 @@ services:
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
       - CRT_CN=#keycloakCRTCOMMONNAME#
+  nexus:
+    build: 
+      dockerfile: Dockerfile-nexus-runtime
+      context: ./../docker_nexus
+    image: #project#/nexus:latest
+    hostname: nexus
+    restart: "no"
+    dns: #corednsIPADDR#
+    volumes:
+      - nexus-data:/home/appuser/data
+    networks:
+      appnet:
+        ipv4_address: #nexusIPADDR#
+    healthcheck:
+      test: "curl --fail https://#nexusIPADDR#:#nexusINTPORT# --insecure || false"
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - NX_ROLEID=#keycloakROLEID#
+      - CRT_VALIDITY=#certificatesVALIDITY#
+      - CRT_C=#certificatesCOUNTRY#
+      - CRT_S=#certificatesSTATE#
+      - CRT_L=#certificatesLOCATION#
+      - CRT_OU=#certificatesOU#
+      - CRT_CN=#keycloakCRTCOMMONNAME#
 networks:
   appnet:
     ipam:
@@ -374,3 +400,4 @@ volumes:
   gitea-data:
   jenkins-data:
   keycloak-data:
+  nexus-data:

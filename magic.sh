@@ -119,6 +119,9 @@ function magic_reset_image() {
         keycloak)
             magic_reset_image_helper $docker_image
             ;;
+        nexus)
+            magic_reset_image_helper $docker_image
+            ;;
         *) # Handles all unknown parameter 
             log "   Ignoring unsupported docker image \"$docker_image\""
             ;;
@@ -183,6 +186,9 @@ function magic_start_image() {
             magic_start_image_helper $docker_image
             ;;
         keycloak)
+            magic_start_image_helper $docker_image
+            ;;
+        nexus)
             magic_start_image_helper $docker_image
             ;;
         *) # Handles all unknown parameter 

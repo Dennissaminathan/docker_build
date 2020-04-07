@@ -20,6 +20,7 @@ function docker_clean_all() {
 	docker_clean "jdk8"
 	docker_clean "jenkins"
 	docker_clean "keycloak"
+	docker_clean "nexus"
 
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
@@ -81,6 +82,7 @@ function docker_build_all() {
 	docker_build "jre11" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 	docker_build "jenkins" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 	docker_build "keycloak" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "nexus" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
@@ -125,6 +127,8 @@ function docker_start_all() {
 	docker_start "jenkins"
 	log "start keycloak"
 	docker_start "keycloak"
+	log "start nexus"
+	docker_start "nexus"
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
