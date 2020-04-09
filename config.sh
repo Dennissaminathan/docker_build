@@ -6,7 +6,7 @@ function config_get_value() {
     local value_name=$2
     local value="null"
 
-    value=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r "'.$value_category.$value_name'" "/home/appuser/app/vault-init.json"')
+    value=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r "'.$value_category.$value_name'" "/home/appuser/app/config.json"')
     
     echo "$value"
 }
@@ -15,7 +15,7 @@ function config_get_containers() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-    for c in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".containers[] | keys | .[]" "/home/appuser/app/vault-init.json"')
+    for c in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".containers[] | keys | .[]" "/home/appuser/app/config.json"')
     do
         log "Add container $c"
         c="${c//$'\r'/}" #Remove unwanted cariage returns
@@ -35,7 +35,7 @@ function config_get_container_values() {
     log "Get configuration values for container $c"
 
     local cnt=0
-    for c in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".containers[].'${container_name}' | to_entries | map(\"\(.key)=\(.value|tostring)\") | .[]" /home/appuser/app/vault-init.json')
+    for c in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".containers[].'${container_name}' | to_entries | map(\"\(.key)=\(.value|tostring)\") | .[]" /home/appuser/app/config.json')
     do
         if [ $cnt -gt 0 ]; then ret+=";"; fi
         c="${c//$'\r'/}" #Remove unwanted cariage returns
@@ -57,15 +57,15 @@ function config_get_certificate_values() {
 
     log "Get certificate values"
 
-    MC_CRTVALIDITY=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.VALIDITY" /home/appuser/app/vault-init.json')
+    MC_CRTVALIDITY=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.VALIDITY" /home/appuser/app/config.json')
     log "Validity \"$MC_CRTVALIDITY\""
-    MC_CRTCOUNTRY=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.COUNTRY" /home/appuser/app/vault-init.json')
+    MC_CRTCOUNTRY=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.COUNTRY" /home/appuser/app/config.json')
     log "Country \"$MC_CRTCOUNTRY\""
-    MC_CRTSTATE=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.STATE" /home/appuser/app/vault-init.json')
+    MC_CRTSTATE=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.STATE" /home/appuser/app/config.json')
     log "State \"$MC_CRTSTATE\""
-    MC_CRTLOCATION=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.LOCATION" /home/appuser/app/vault-init.json')
+    MC_CRTLOCATION=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.LOCATION" /home/appuser/app/config.json')
     log "Location \"$MC_CRTLOCATION\""
-    MC_CRTOU=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.OU" /home/appuser/app/vault-init.json')
+    MC_CRTOU=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.OU" /home/appuser/app/config.json')
     log "OU \"$MC_CRTOU\""
     
     MC_LOGINDENT=$((MC_LOGINDENT-3))

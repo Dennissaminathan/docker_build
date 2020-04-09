@@ -8,3 +8,5 @@ docker-compose*.yml
 docker-compose*.yaml
 vault_keys.txt
 Dockerfile-*-runtime
+setup/config_*.json
+setup/user_*.json

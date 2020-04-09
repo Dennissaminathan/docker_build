@@ -26,6 +26,7 @@ function helper_set_variables() {
     MC_NOUPDATE=0
     MC_LOGBUILD=0
     MC_LOGSTART=0
+    MC_CONFIGFILE=config
 
     # Certificate properties overwritten by configuration file
     MC_CRTVALIDITY="3650"
@@ -34,7 +35,7 @@ function helper_set_variables() {
     MC_CRTLOCATION="ISMANING"
     MC_CRTOU="LOCALDEV"
 
-    # TODO: Die MC_VAULT* Variablen müssen in die vault-init.json Datein übernommen werden.
+    # TODO: Die MC_VAULT* Variablen müssen in die config.json Datein übernommen werden.
     MC_VAULTURL="https://127.0.0.1"
     MC_VAULTPORT="30105"
     MC_VAULTCONTAINER="vault"
@@ -99,6 +100,9 @@ function helper_parse_parameter() {
             --logstart)
                 MC_LOGSTART=1
                 ;;
+            --config-file)
+                MC_CONFIGFILE=$value
+                ;;
             *) # Handles all unknown parameter 
                 log "   Ignoring unknown parameter \"$param\""
                 ;;
@@ -112,6 +116,7 @@ function helper_parse_parameter() {
     log "MC_RESETIMAGE=$MC_RESETIMAGE"
     log "MC_LOGBUILD=$MC_LOGBUILD"
     log "MC_LOGSTART=$MC_LOGSTART"
+    log "MC_CONFIGFILE=$MC_CONFIGFILE"
 
     if [ "$MC_PROJECT" == "" ]; then log "\"Project\" not configured"; exit 1; fi
 
@@ -200,6 +205,7 @@ function helper_usage() {
     echo " --no-update                    Prevents the update of the git repos."
     echo " --logbuild                     The output of \"docker-compose build\" is shown."
     echo " --logstart                     The output of \"docker-compose up\" is shown."
+    echo " --config-file                  Set the target configuration file (defaults to \"config\")"
     echo ""
     echo ""
     echo "Please make sure, that you added the following entries to your hosts file under"

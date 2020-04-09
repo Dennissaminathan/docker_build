@@ -3,7 +3,7 @@
 function docker_clean_all() {
 
 	MC_LOGINDENT=$((MC_LOGINDENT+3))
-	#TODO: Replace with dynamic list from vault-init.json
+
 	docker_clean "alpine"
 	docker_clean "build"
 	docker_clean "go"
@@ -194,6 +194,12 @@ function docker_build() {
 
 	echo "Patch Dockerfile for container image \"$container_name\""
 	sed -i -e "s/#MC_PROJECT#/${MC_PROJECT}/g" "${MC_WORKDIR}/../docker_${folder_name}/Dockerfile-${container_name}-runtime"
+	
+	if [ "${container_name}" == "build" ]
+	then
+		echo "Patch special variables just used in build image"
+		sed -i -e "s/#MC_CONFIGFILE#/${MC_CONFIGFILE}/g" "${MC_WORKDIR}/../docker_${folder_name}/Dockerfile-${container_name}-runtime"
+	fi
 
 	log "Use file: $file_name"
 	if [ $MC_LOGBUILD -eq 1 ]

@@ -5,8 +5,8 @@ LABEL MAINTAINER="David Koenig"
 ARG IMAGE_NAME=#MC_PROJECT#/build
 ARG IMAGE_VERSION=1.1
 
-ADD setup/vault-init.json /home/appuser/app/vault-init.json
+ADD setup/#MC_CONFIGFILE#.json /home/appuser/app/config.json
 
-RUN chown appuser:appuser /home/appuser/app/vault-init.json
+RUN chown appuser:appuser /home/appuser/app/config.json
 
 USER appuser
