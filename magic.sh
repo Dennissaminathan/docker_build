@@ -250,11 +250,15 @@ function magic_reset_all() {
     log "docker system prune"
     docker system prune -f  > /dev/null 2>&1
 
-    log "docker build vault"
-    docker_build_vault
+    log "Build mariadb, go and vault image"
+	docker_build "go" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "mariadb" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
+	docker_build "vault" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 
-    log "docker start vault"
-    docker_start_vault
+    log "start mariadb"
+	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d mariadbvault > /dev/null 2>&1
+	log "start vault"
+	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d vault > /dev/null 2>&1
 
     log "get the root token out of the docker container"
     local root_token=$(vault_get_root_token "$MC_VAULTCONTAINER")
@@ -268,8 +272,10 @@ function magic_reset_all() {
     log "Write secrets from json to vault-server"
     vault_add_secrets "$root_token"
    
-    log "docker vault stop"
-    docker_vault_stop
+    log "stop vault"
+	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" down -d vault > /dev/null 2>&1
+	log "stop mariadb"
+	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" down -d mariadbvault > /dev/null 2>&1
 
     log "docker build all"
     docker_build_all

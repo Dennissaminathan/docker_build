@@ -21,6 +21,27 @@ function docker_clean_all() {
 	docker_clean "jenkins"
 	docker_clean "keycloak"
 	docker_clean "nexus"
+	docker system prune
+
+	MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
+
+function docker_clean() { 
+
+	local container_name="$1"
+
+	MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+	log "remove container ""$container_name"""
+
+	# stop container 
+	if [ "$(docker ps -f name=${MC_PROJECT}_${container_name}_1 -q)" ]; then log "...Container exist, stop..."; docker stop ${MC_PROJECT}_${container_name}_1 > /dev/null; fi
+	# delete container
+	if [ "$(docker ps -f name=${MC_PROJECT}_${container_name}_1 -a -q)" ]; then log "...Container exist, delete..."; docker rm ${MC_PROJECT}_${container_name}_1 > /dev/null; fi
+	# delete image
+	if [ "$(docker images ${MC_PROJECT}/${container_name} -q)" ]; then log "...Image exist, delete..."; docker rmi ${MC_PROJECT}/${container_name} -f > /dev/null; fi
+	# delete volume
+	if [ "$(docker volume ls -f name=${MC_PROJECT}_${container_name}-data -q)" ]; then log "...Volume exist, delete..."; docker volume rm ${MC_PROJECT}_${container_name}-data > /dev/null; fi
 
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
@@ -55,18 +76,6 @@ function docker_build_setup() {
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
-function docker_build_vault() {
-
-	MC_LOGINDENT=$((MC_LOGINDENT+3))
-
-	log "Build mariadb, go and vault image"
-	docker_build "go" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
-	docker_build "mariadb" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
-	docker_build "vault" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
-
-	MC_LOGINDENT=$((MC_LOGINDENT-3))
-}
-
 function docker_build_all() {
 
 	MC_LOGINDENT=$((MC_LOGINDENT+3))
@@ -83,91 +92,6 @@ function docker_build_all() {
 	docker_build "jenkins" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 	docker_build "keycloak" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
 	docker_build "nexus" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
-	MC_LOGINDENT=$((MC_LOGINDENT-3))
-}
-
-function docker_start_vault() {
-    
-	MC_LOGINDENT=$((MC_LOGINDENT+3))
-
-	log "start mariadb"
-	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d mariadbvault > /dev/null 2>&1
-	log "start vault"
-	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d vault > /dev/null 2>&1
-
-	MC_LOGINDENT=$((MC_LOGINDENT-3))
-}
-
-function docker_vault_stop() {
-	MC_LOGINDENT=$((MC_LOGINDENT+3))
-	log "stop vault"
-	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" down -d vault > /dev/null 2>&1
-	log "stop mariadb"
-	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" down -d mariadbvault > /dev/null 2>&1
-	MC_LOGINDENT=$((MC_LOGINDENT-3))
-}
-
-function docker_start_all() {
-	MC_LOGINDENT=$((MC_LOGINDENT+3))
-	log "start mariadb for vault"
-	docker_start "mariadbvault"
-	log "start vault"
-	docker_start "vault"
-	log "start mariadb"
-	docker_start "mariadb"
-	log "start nginx"
-	docker_start "nginx"
-	log "start leberkas"
-	docker_start "leberkas"
-	log "start coredns"
-	docker_start "coredns"
-	log "start gitea"
-	docker_start "gitea"
-	log "start jenkins"
-	docker_start "jenkins"
-	log "start keycloak"
-	docker_start "keycloak"
-	log "start nexus"
-	docker_start "nexus"
-	MC_LOGINDENT=$((MC_LOGINDENT-3))
-}
-
-function docker_start() {
-	
-	local container_name=$1
-	
-	MC_LOGINDENT=$((MC_LOGINDENT+3))
-
-	log "start container \"$container_name\""
-	
-	if [ $MC_LOGSTART -eq 1 ]
-	then
-		log "docker-compose output enabled"; 
-		docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d $container_name
-	else
-		log "docker-compose output disabled"; 
-		docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d $container_name > /dev/null 2>&1
-	fi 
-
-	MC_LOGINDENT=$((MC_LOGINDENT-3))
-}
-
-function docker_clean() { 
-
-	local container_name="$1"
-
-	MC_LOGINDENT=$((MC_LOGINDENT+3))
-
-	log "remove container ""$container_name"""
-
-	# stop container 
-	if [ "$(docker ps -f name=${MC_PROJECT}_${container_name}_1 -q)" ]; then log "...Container exist, stop..."; docker stop ${MC_PROJECT}_${container_name}_1 > /dev/null; fi
-	# delete container
-	if [ "$(docker ps -f name=${MC_PROJECT}_${container_name}_1 -a -q)" ]; then log "...Container exist, delete..."; docker rm ${MC_PROJECT}_${container_name}_1 > /dev/null; fi
-	# delete image
-	if [ "$(docker images ${MC_PROJECT}/${container_name} -q)" ]; then log "...Image exist, delete..."; docker rmi ${MC_PROJECT}/${container_name} -f > /dev/null; fi
-	# delete volume
-	if [ "$(docker volume ls -f name=${MC_PROJECT}_${container_name}-data -q)" ]; then log "...Volume exist, delete..."; docker volume rm ${MC_PROJECT}_${container_name}-data > /dev/null; fi
 
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
@@ -223,6 +147,53 @@ function docker_build() {
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
+function docker_start_all() {
+	MC_LOGINDENT=$((MC_LOGINDENT+3))
+	
+	log "start mariadb for vault"
+	docker_start "mariadbvault"
+	log "start vault"
+	docker_start "vault"
+	log "start mariadb"
+	docker_start "mariadb"
+	log "start nginx"
+	docker_start "nginx"
+	log "start leberkas"
+	docker_start "leberkas"
+	log "start coredns"
+	docker_start "coredns"
+	log "start gitea"
+	docker_start "gitea"
+	log "start jenkins"
+	docker_start "jenkins"
+	log "start keycloak"
+	docker_start "keycloak"
+	log "start nexus"
+	docker_start "nexus"
+	
+	MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
+
+function docker_start() {
+	
+	local container_name=$1
+	
+	MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+	log "start container \"$container_name\""
+	
+	if [ $MC_LOGSTART -eq 1 ]
+	then
+		log "docker-compose output enabled"; 
+		docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d $container_name
+	else
+		log "docker-compose output disabled"; 
+		docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d $container_name > /dev/null 2>&1
+	fi 
+
+	MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
+
 function docker_write_roleid() {
 	
 	local container_name="$1"
@@ -249,13 +220,4 @@ function docker_write_secretid() {
          log "Failed to write secretid to \"${MC_PROJECT}_${container_name}_1\". Leaving script"
          exit 1
     fi
-}
-
-function set_alias() {
-	
-	local container_name="$1"
-	local container_short_name=${arr[$container_name]}
-	echo "Create alias ""de$container_short_name=""docker exec -i ${MC_PROJECT}_${container_name}_1 sh"""""
-	alias de${container_short_name}='''docker exec -i '${MC_PROJECT}'_'${container_name}'_1 sh'''
-	alias dl$container_short_name='''docker logs '${MC_PROJECT}'_'${container_name}'_1'''
 }
