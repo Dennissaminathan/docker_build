@@ -6,6 +6,10 @@
         "LOCATION":"ISMANING",
         "OU":"DOGCHAIN.GO"
     },
+    "usersettings": {
+        "MAILDOMAIN":"dogchain.go",
+        "DEFAULTPASSWORD":"PWD4DOGchain"
+    },
     "containers":[
         {
             "mariadbvault": {
@@ -141,6 +145,192 @@
                 "INTPORT":"30114",
                 "DOCKERPORT":"58096",
                 "IPADDR":"172.6.66.114"
+            }
+        }
+    ],
+    "users":[
+        {
+            "aattkinson": {
+                "FIRSTNAME":"Anna",
+                "LASTNAME":"Attkinson",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "bburn": {
+                "FIRSTNAME":"Benjamin",
+                "LASTNAME":"Burn",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "cchoi": {
+                "FIRSTNAME":"Cora",
+                "LASTNAME":"Choi",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "ddarling": {
+                "FIRSTNAME":"Dana",
+                "LASTNAME":"Darling",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "eestrada": {
+                "FIRSTNAME":"Eugene",
+                "LASTNAME":"Estrada",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "ffrancis": {
+                "FIRSTNAME":"Fiona",
+                "LASTNAME":"Francis",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "ggrundy": {
+                "FIRSTNAME":"Gary",
+                "LASTNAME":"Grundy",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "hhu": {
+                "FIRSTNAME":"Hannah",
+                "LASTNAME":"Hu",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "iirvin": {
+                "FIRSTNAME":"Ivan",
+                "LASTNAME":"Irvin",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "jjefferson": {
+                "FIRSTNAME":"Juliet",
+                "LASTNAME":"Jefferson",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "kkipling": {
+                "FIRSTNAME":"Kenny",
+                "LASTNAME":"Kipling",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "llang": {
+                "FIRSTNAME":"Lilly",
+                "LASTNAME":"Lang",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "mccollum": {
+                "FIRSTNAME":"Marissa",
+                "LASTNAME":"MCCollum",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "nnewman": {
+                "FIRSTNAME":"Norman",
+                "LASTNAME":"Newman",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "ooxley": {
+                "FIRSTNAME":"Otto",
+                "LASTNAME":"Oxley",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "ppitts": {
+                "FIRSTNAME":"Penny",
+                "LASTNAME":"Pitts",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "qquick": {
+                "FIRSTNAME":"Quin",
+                "LASTNAME":"Quick",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "rroper": {
+                "FIRSTNAME":"Rosy",
+                "LASTNAME":"Roper",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "sswenson": {
+                "FIRSTNAME":"Steve",
+                "LASTNAME":"Swenson",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "ttucker": {
+                "FIRSTNAME":"Tatjana",
+                "LASTNAME":"Tucker",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "uuhlrich": {
+                "FIRSTNAME":"Ulf",
+                "LASTNAME":"Uhlrich",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "vvalentine": {
+                "FIRSTNAME":"Vivien",
+                "LASTNAME":"Valentine",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "wwatson": {
+                "FIRSTNAME":"Warren",
+                "LASTNAME":"Watson",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "xxiang": {
+                "FIRSTNAME":"Xenia",
+                "LASTNAME":"Xiang",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "yybarra": {
+                "FIRSTNAME":"Yusuf",
+                "LASTNAME":"Ybarra",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
+            },
+            "zzimmermann": {
+                "FIRSTNAME":"Zora",
+                "LASTNAME":"Zimmermann",
+                "MAILUSERNAME":"${USERNAME}",
+                "MAILDOMAIN":"${MAILDOMAIN}",
+                "PASSWORD":"${DEFAULTPASSWORD}"
             }
         }
     ]

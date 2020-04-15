@@ -27,6 +27,7 @@ function helper_set_variables() {
     MC_LOGBUILD=0
     MC_LOGSTART=0
     MC_CONFIGFILE=config
+    MC_UPDATECONFIG=0
 
     # Certificate properties overwritten by configuration file
     MC_CRTVALIDITY="3650"
@@ -34,6 +35,10 @@ function helper_set_variables() {
     MC_CRTSTATE="BAVARIAN"
     MC_CRTLOCATION="ISMANING"
     MC_CRTOU="LOCALDEV"
+
+    # User default values overwritten by configuration file
+    MC_MAILDOMAIN="defaultmail.domain"
+    MC_DEFAULTPASSWORD="defaultpassword"
 
     # TODO: Die MC_VAULT* Variablen müssen in die config.json Datein übernommen werden.
     MC_VAULTURL="https://127.0.0.1"
@@ -103,6 +108,9 @@ function helper_parse_parameter() {
             --config-file)
                 MC_CONFIGFILE=$value
                 ;;
+            --update-config)
+                MC_UPDATECONFIG=1
+                ;;
             *) # Handles all unknown parameter 
                 log "   Ignoring unknown parameter \"$param\""
                 ;;
@@ -117,6 +125,7 @@ function helper_parse_parameter() {
     log "MC_LOGBUILD=$MC_LOGBUILD"
     log "MC_LOGSTART=$MC_LOGSTART"
     log "MC_CONFIGFILE=$MC_CONFIGFILE"
+    log "MC_UPDATECONFIG=$MC_UPDATECONFIG"
 
     if [ "$MC_PROJECT" == "" ]; then log "\"Project\" not configured"; exit 1; fi
 
@@ -205,7 +214,8 @@ function helper_usage() {
     echo " --no-update                    Prevents the update of the git repos."
     echo " --logbuild                     The output of \"docker-compose build\" is shown."
     echo " --logstart                     The output of \"docker-compose up\" is shown."
-    echo " --config-file                  Set the target configuration file (defaults to \"config\")"
+    echo " --config-file                  Set the target configuration file (defaults to \"config\")."
+    echo " --update-config                Rebuild the \"build\" environment and update all configuration files."
     echo ""
     echo ""
     echo "Please make sure, that you added the following entries to your hosts file under"

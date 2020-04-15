@@ -2,11 +2,12 @@
 
 function config_get_value() {
     
-    local value_category=$1
-    local value_name=$2
+    local value_type=$1
+    local object_name=$2
+    local value_name=$3
     local value="null"
 
-    value=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r "'.$value_category.$value_name'" "/home/appuser/app/config.json"')
+    value=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".'${value_type}'[].'${object_name}'.'${value_name}'" /home/appuser/app/config.json')
     
     echo "$value"
 }
@@ -32,7 +33,7 @@ function config_get_container_values() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-    log "Get configuration values for container $c"
+    log "Get configuration values for container \"$container_name\""
 
     local cnt=0
     for c in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".containers[].'${container_name}' | to_entries | map(\"\(.key)=\(.value|tostring)\") | .[]" /home/appuser/app/config.json')
@@ -48,10 +49,56 @@ function config_get_container_values() {
     echo ${ret}
 }
 
-function config_get_certificate_values() {
+function config_get_users() {
+
+    MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+    for u in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".users[] | keys | .[]" "/home/appuser/app/config.json"')
+    do
+        log "Add user $u"
+        u="${u//$'\r'/}" #Remove unwanted cariage returns
+        users+=("${u}")
+    done
+
+    MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
+
+function config_get_user_values() {
     
-    local container_name=$1
+    local user_name=$1
     local ret=
+
+    MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+    log "Get configuration values for user \"$user_name\""
+
+    local cnt=0
+    for u in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".users[].'${user_name}' | to_entries | map(\"\(.key)=\(.value|tostring)\") | .[]" /home/appuser/app/config.json')
+    do
+        if [ $cnt -gt 0 ]; then ret+=";"; fi
+        u="${u//$'\r'/}" #Remove unwanted cariage returns
+        ret+=${u}
+        ((cnt++))
+    done
+    log "Found ${cnt} values"
+    MC_LOGINDENT=$((MC_LOGINDENT-3))
+
+    echo ${ret}
+}
+
+function config_get_userdefaultsettings() {
+
+    MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+    MC_MAILDOMAIN=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".usersettings.MAILDOMAIN" /home/appuser/app/config.json')
+    log "Maildomain \"$MC_MAILDOMAIN\""
+    MC_DEFAULTPASSWORD=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".usersettings.DEFAULTPASSWORD" /home/appuser/app/config.json')
+    log "Defaultpassword \"$MC_DEFAULTPASSWORD\""
+    
+    MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
+
+function config_get_certificate_values() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 

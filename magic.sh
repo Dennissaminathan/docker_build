@@ -2,11 +2,13 @@
 
 MC_WORKDIR=$(dirname "$(readlink -f "$0")")
 declare -a containers
+declare -a users
 
 source $MC_WORKDIR/helper.sh
 source $MC_WORKDIR/docker.sh
 source $MC_WORKDIR/vault.sh
 source $MC_WORKDIR/config.sh
+source $MC_WORKDIR/keycloak.sh
 
 function magic_main() {
 
@@ -47,6 +49,10 @@ function magic_main() {
         magic_clean_all $@
 
         docker system prune -f
+    
+    elif [ $MC_UPDATECONFIG -eq 1 ]
+    then 
+        magic_update_config
     else
         log "No action selected."
     fi
@@ -118,6 +124,11 @@ function magic_reset_image() {
             ;;
         keycloak)
             magic_reset_image_helper $docker_image
+            log "get the list of users from the configuration file"
+            config_get_users
+
+            log "Setup keycloak initally"
+            keycloak_initial_setup
             ;;
         nexus)
             magic_reset_image_helper $docker_image
@@ -213,7 +224,7 @@ function magic_reset_image_helper() {
 
     if [ $MC_LOGSTART == 1 ]
     then 
-        docker logs ${MC_PROJECT}_${docker_image}_1 --follow
+        docker logs ${MC_PROJECT}_${docker_image}_1
     fi
 }
 
@@ -232,23 +243,11 @@ function magic_reset_all() {
     log "docker clean all"
     docker_clean_all
 
-    log "download files needed for build process"
-    helper_git_download ${MC_GITURL}/docker_alpine "docker_alpine"
-
-    log "docker build setup"
-    docker_build_setup
-
-    log "config get containers"
-    config_get_containers
+    log "Update the configuration files by building the \"\build\" environment"
+    magic_update_config
     
-    log "download all needed git repos"
+    log "download or update all needed git repos"
     helper_git_download_all
-
-    log "config create docker compose file"
-    config_create_docker_compose_file
-
-    log "docker system prune"
-    docker system prune -f  > /dev/null 2>&1
 
     log "Build mariadb, go and vault image"
 	docker_build "go" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
@@ -260,7 +259,7 @@ function magic_reset_all() {
 	log "start vault"
 	docker-compose -f "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml" --project-name "$MC_PROJECT" up -d vault > /dev/null 2>&1
 
-    log "get the root token out of the docker container"
+    log "get the root token out of the vault docker container"
     local root_token=$(vault_get_root_token "$MC_VAULTCONTAINER")
     
     log "check if vault is running and unsealed and unseal if needed"
@@ -282,13 +281,33 @@ function magic_reset_all() {
 
     log "docker start all"
     docker_start_all
+
+    log "get user default settings"
+    config_get_userdefaultsettings
+
+    log "get the list of users from the configuration file"
+    config_get_users
+
+    log "Setup keycloak initally"
+    keycloak_initial_setup
+
+    log "docker system prune"
+    docker system prune -f  > /dev/null 2>&1
 }
 
-function magic_clean_all() {
+function magic_update_config() {
 
-    log "docker clean all"
-    docker_clean_all
+    log "download or update files needed for build process"
+    helper_git_download ${MC_GITURL}/docker_alpine "docker_alpine"
 
+    log "build the \"build\" container"
+    docker_build_setup
+
+    log "get the list of containers from the configuration file"
+    config_get_containers
+
+    log "config create docker compose file"
+    config_create_docker_compose_file
 }
 
 magic_main $@
