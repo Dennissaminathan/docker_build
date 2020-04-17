@@ -142,10 +142,10 @@
             },
             "nexus": {
                 "ROLEID":"nexusroleid",
+                "CERTPWD": "dogchain2go",
                 "INTPORT":"30114",
                 "DOCKERPORT":"58096",
                 "IPADDR":"172.6.66.114"
-		"nexusCERTPWD": "dogchain2go"
             }
         }
     ],

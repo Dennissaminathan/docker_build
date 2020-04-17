@@ -378,13 +378,13 @@ services:
       retries: 3
     environment:
       - NX_ROLEID=#keycloakROLEID#
+      - NX_CERTPWD=#nexusCERTPWD#
       - CRT_VALIDITY=#certificatesVALIDITY#
       - CRT_C=#certificatesCOUNTRY#
       - CRT_S=#certificatesSTATE#
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
       - CRT_CN=#keycloakCRTCOMMONNAME#
-      - NX_CERTPWD=#nexusCERTPWD#
 networks:
   appnet:
     ipam:

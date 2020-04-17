@@ -12,7 +12,6 @@ function keycloak_initial_setup() {
     keycloak_create_users
 
     MC_LOGINDENT=$((MC_LOGINDENT-3))
-
 }
 
 function keycloak_wait_for_startup() {
@@ -22,9 +21,16 @@ function keycloak_wait_for_startup() {
     log "check keycloak availability by searching for firststart_finished.flg"
     cmd="ls /home/appuser/data/firststart_finished.flg"
 
+    cnt=0
     while ! docker exec -it ${MC_PROJECT}_keycloak_1 sh -c "${cmd}" > /dev/null 2>&1; do
+        ((cnt++))
         log "firststart_finished.flg not available. Wait 15s for slow java junk and try again ..."
         sleep 15s
+        if [ $cnt -eq 21 ]
+        then
+            log "Failed to start keycloak"
+            exit 1
+        fi
     done
 
     log "keycloak setup finished. Try to login now to check if keycloak is available."
@@ -39,9 +45,16 @@ function keycloak_wait_for_startup() {
         ./kcadm.sh config truststore --trustpass ${kc_certpwd} /home/appuser/data/certificates/keycloak_keystore.jks;
         ./kcadm.sh config credentials --server https://${kc_bindaddress}:${kc_httpsintport}/auth --realm master --user ${kc_adminuser} --password ${kc_adminpwd};"
 
+    cnt=0
     while ! docker exec -it ${MC_PROJECT}_keycloak_1 sh -c "${cmd}" > /dev/null 2>&1; do
+        ((cnt++))
         log "Keycloak service is not available. Wait 5s and try again ..."
         sleep 5s
+        if [ $cnt -eq 21 ]
+        then
+            log "Failed to start keycloak"
+            exit 1
+        fi
     done
 
     log "Keycloak server now available. Lets go."
@@ -157,7 +170,7 @@ EOF
     local kc_adminpwd=$(config_get_value "containers" "keycloak" "ADMINPWD")
     local kc_initrealm=$(config_get_value "containers" "keycloak" "INITREALM")
 
-log "create user \"${user_username}\" in keycloak with kcadm.sh"
+    log "create user \"${user_username}\" in keycloak with kcadm.sh"
     cmd="cd /home/appuser/app/keycloak/bin;
         ./kcadm.sh config truststore --trustpass ${kc_certpwd} /home/appuser/data/certificates/keycloak_keystore.jks;
         ./kcadm.sh config credentials --server https://${kc_bindaddress}:${kc_httpsintport}/auth --realm master --user ${kc_adminuser} --password ${kc_adminpwd};

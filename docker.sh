@@ -21,7 +21,7 @@ function docker_clean_all() {
 	docker_clean "jenkins"
 	docker_clean "keycloak"
 	docker_clean "nexus"
-	docker system prune
+	docker system prune -f
 
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
