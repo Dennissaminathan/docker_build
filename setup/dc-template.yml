@@ -384,6 +384,7 @@ services:
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
       - CRT_CN=#keycloakCRTCOMMONNAME#
+      - NX_CERTPWD=#nexusCERTPWD#
 networks:
   appnet:
     ipam:
