@@ -35,11 +35,11 @@ function helper_set_variables() {
     MC_CRTSTATE="BAVARIAN"
     MC_CRTLOCATION="ISMANING"
     MC_CRTOU="LOCALDEV"
-
+    
     # User default values overwritten by configuration file
     MC_MAILDOMAIN="defaultmail.domain"
     MC_DEFAULTPASSWORD="defaultpassword"
-
+    
     # TODO: Die MC_VAULT* Variablen müssen in die config.json Datein übernommen werden.
     MC_VAULTURL="https://127.0.0.1"
     MC_VAULTPORT="30105"

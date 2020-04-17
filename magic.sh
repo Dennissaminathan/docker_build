@@ -9,6 +9,7 @@ source $MC_WORKDIR/docker.sh
 source $MC_WORKDIR/vault.sh
 source $MC_WORKDIR/config.sh
 source $MC_WORKDIR/keycloak.sh
+source $MC_WORKDIR/gitea.sh
 
 function magic_main() {
 
@@ -39,6 +40,10 @@ function magic_main() {
         log "test internet"
         helper_test_internet
 
+        config_get_certificate_values
+
+        config_get_usersettings
+
         magic_reset_all $@
 
     elif [ $MC_CLEANALL -eq 1 ]
@@ -52,6 +57,8 @@ function magic_main() {
     
     elif [ $MC_UPDATECONFIG -eq 1 ]
     then 
+        config_get_certificate_values
+
         magic_update_config
     else
         log "No action selected."
@@ -108,21 +115,36 @@ function magic_reset_image() {
             magic_reset_image_helper $docker_image
             ;;
         nginx)
+            config_get_certificate_values
             magic_reset_image_helper $docker_image
             ;;
         leberkas)
+            config_get_certificate_values
             magic_reset_image_helper $docker_image
             ;;
         coredns)
             magic_reset_image_helper $docker_image
             ;;
         gitea)
+            config_get_certificate_values
+            config_get_usersettings
+            
             magic_reset_image_helper $docker_image
+            
+            log "get the list of users from the configuration file"
+            config_get_users
+
+            log "Setup gitea initally"
+            gitea_initial_setup
             ;;
         jenkins)
+            config_get_certificate_values
+
             magic_reset_image_helper $docker_image
             ;;
         keycloak)
+            config_get_certificate_values
+            config_get_usersettings
             magic_reset_image_helper $docker_image
             log "get the list of users from the configuration file"
             config_get_users
@@ -131,6 +153,8 @@ function magic_reset_image() {
             keycloak_initial_setup
             ;;
         nexus)
+            config_get_certificate_values
+            config_get_usersettings
             magic_reset_image_helper $docker_image
             ;;
         *) # Handles all unknown parameter 

@@ -116,7 +116,22 @@ function config_get_certificate_values() {
     log "OU \"$MC_CRTOU\""
     
     MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
 
+function config_get_usersettings() {
+
+    MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+    log "Get user default values"
+    MC_MAILDOMAIN="defaultmail.domain"
+    MC_DEFAULTPASSWORD="defaultpassword"
+
+    MC_MAILDOMAIN=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".usersettings.MAILDOMAIN" /home/appuser/app/config.json')
+    log "Default maildomain \"$MC_MAILDOMAIN\""
+    MC_DEFAULTPASSWORD=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".usersettings.DEFAULTPASSWORD" /home/appuser/app/config.json')
+    log "Default password \"$MC_DEFAULTPASSWORD\""
+    
+    MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
 function config_create_docker_compose_file() {
@@ -146,7 +161,6 @@ function config_create_docker_compose_file() {
     done
 
     log "set certificate values from configuration into compose file"
-    config_get_certificate_values
     sed -i -e "s/\#certificatesVALIDITY\#/${MC_CRTVALIDITY}/g" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
     sed -i -e "s/\#certificatesCOUNTRY\#/${MC_CRTCOUNTRY}/g" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"
     sed -i -e "s/\#certificatesSTATE\#/${MC_CRTSTATE}/g" "${MC_WORKDIR}/docker-compose-${MC_PROJECT}.yml"

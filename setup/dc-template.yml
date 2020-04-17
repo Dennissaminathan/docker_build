@@ -22,7 +22,7 @@ services:
       appnet:
         ipv4_address: #mariadbvaultIPADDR#
     healthcheck:
-      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#mariadbvaultHEALTHPWD# -P #mariadbvaultEXTPORT#"
+      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#mariadbvaultHEALTHPWD# -P #mariadbvaultINTPORT#"
       interval: 5s
       timeout: 10s
       retries: 3

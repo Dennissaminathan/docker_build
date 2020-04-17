@@ -69,7 +69,7 @@ function keycloak_create_users() {
     local user_firstname="firstname"
     local user_lastname="lastname"
     local user_mailusername="mailusername"
-    local user_maildomain="mailusername"
+    local user_maildomain="maildomain"
     local user_password="password"
 
     for u in "${users[@]}"
