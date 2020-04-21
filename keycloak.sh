@@ -48,8 +48,8 @@ function keycloak_wait_for_startup() {
     cnt=0
     while ! docker exec -it ${MC_PROJECT}_keycloak_1 sh -c "${cmd}" > /dev/null 2>&1; do
         ((cnt++))
-        log "Keycloak service is not available. Wait 5s and try again ..."
-        sleep 5s
+        log "Keycloak service is not available. Wait 15s and try again ..."
+        sleep 15s
         if [ $cnt -eq 21 ]
         then
             log "Failed to start keycloak"

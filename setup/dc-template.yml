@@ -11,32 +11,6 @@ services:
       dockerfile: Dockerfile-build-runtime
       context: .
     image: #project#/build:latest  
-  mariadbvault:
-    image: #project#/mariadb:latest
-    hostname: mariadbvault
-    restart: "no"
-    dns: #corednsIPADDR#
-    volumes:
-      - mariadbvault-data:/home/appuser/data
-    networks:
-      appnet:
-        ipv4_address: #mariadbvaultIPADDR#
-    healthcheck:
-      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#mariadbvaultHEALTHPWD# -P #mariadbvaultINTPORT#"
-      interval: 5s
-      timeout: 10s
-      retries: 3
-    environment:
-      - MDB_ROLEID=#mariadbvaultROLEID#
-      - MDB_ROOTPWD=#mariadbvaultROOTPWD#
-      - MDB_PORT=#mariadbvaultINTPORT#
-      - MDB_ADMINUSER=#mariadbvaultADMINUSER#
-      - MDB_BACKUPUSER=#mariadbvaultBACKUPUSER#
-      - MDB_ADMINPWD=#mariadbvaultADMINPWD#
-      - MDB_BACKUPPWD=#mariadbvaultBACKUPPWD#
-      - MDB_HEALTHPWD=#mariadbvaultHEALTHPWD#
-      - MDB_COLLATION=#mariadbvaultCOLLATION#
-      - MDB_CHARACTERSET=#mariadbvaultCHARACTERSET#
   go:
     build: 
       dockerfile: Dockerfile-go-runtime
@@ -71,7 +45,7 @@ services:
     restart: "no"
     dns: #corednsIPADDR#
     depends_on:
-      - mariadbvault
+      - mariadb
     volumes:
       - vault-data:/home/appuser/data
     networks:
@@ -128,7 +102,7 @@ services:
       - NGX_IPADDR=#nginxIPADDR#
       - LBK_IPADDR=#leberkasIPADDR#
       - MDB_IPADDR=#mariadbIPADDR#
-      - DBV_IPADDR=#mariadbvaultIPADDR#
+      - DBV_IPADDR=#mariadbIPADDR#
       - GT_IPADDR=#giteaIPADDR#
       - JKS_IPADDR=#jenkinsIPADDR#
       - KC_IPADDR=#keycloakIPADDR#
@@ -392,7 +366,6 @@ networks:
       config:
         - subnet: "172.6.66.0/24"
 volumes:
-  mariadbvault-data:
   vault-data:
   coredns-data:
   nginx-data:

@@ -44,6 +44,12 @@ function helper_set_variables() {
     MC_VAULTURL="https://127.0.0.1"
     MC_VAULTPORT="30105"
     MC_VAULTCONTAINER="vault"
+
+    # Control variables used by several functions. Do not touch
+    MC_CONTROL_USERS=0
+    MC_CONTROL_USERDEFAULTS=0
+    MC_CONTROL_CONTAINERS=0
+    MC_CONTROL_CERTDEFAULTS=0
 }
 
 function helper_test_internet() {
@@ -128,31 +134,6 @@ function helper_parse_parameter() {
     log "MC_UPDATECONFIG=$MC_UPDATECONFIG"
 
     if [ "$MC_PROJECT" == "" ]; then log "\"Project\" not configured"; exit 1; fi
-
-    MC_LOGINDENT=$((MC_LOGINDENT-3))
-}
-
-function helper_git_download_all() {
-    
-    MC_LOGINDENT=$((MC_LOGINDENT+3))
-
-    if [ $MC_NOUPDATE -eq 0 ]
-    then
-        log "start git update"
-        helper_git_download ${MC_GITURL}/docker_go "docker_go"
-        helper_git_download ${MC_GITURL}/docker_nginx "docker_nginx"
-        helper_git_download ${MC_GITURL}/docker_leberkas "docker_leberkas"
-        helper_git_download ${MC_GITURL}/docker_coredns "docker_coredns"
-        helper_git_download ${MC_GITURL}/docker_mariadb "docker_mariadb"
-        helper_git_download ${MC_GITURL}/docker_vault "docker_vault"
-        helper_git_download ${MC_GITURL}/docker_gitea "docker_gitea"
-        helper_git_download ${MC_GITURL}/docker_java "docker_java"
-        helper_git_download ${MC_GITURL}/docker_jenkins "docker_jenkins"
-        helper_git_download ${MC_GITURL}/docker_keycloak "docker_keycloak"
-        helper_git_download ${MC_GITURL}/docker_nexus "docker_nexus"
-    else
-        log "skip git update"
-    fi
 
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }

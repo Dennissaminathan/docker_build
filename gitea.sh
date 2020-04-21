@@ -90,6 +90,8 @@ function gitea_create_users() {
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
+
+
     #echo create OpenID Connect configuration
     #./gitea -c /home/appuser/data/gitea.ini admin auth add-oauth --name gitea.dogchain2go --provider OpenIDConnect --key gitea.dogchain2go --secret 12345678-1234-abd-1234-0123456789ab --auto-discovery-url https://keycloak.dogchain.go/auth/realms/dogchain2g0/.well-known/openid-configuration
 
@@ -105,7 +107,7 @@ function gitea_write_user() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-    log "Create user in keycloak"
+    log "Create user in gitea"
 
     log "create user \"${user_username}\" with mail address "${user_mailusername}@${user_maildomain}" in gitea"
     

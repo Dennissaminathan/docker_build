@@ -16,12 +16,21 @@ function config_get_containers() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-    for c in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".containers[] | keys | .[]" "/home/appuser/app/config.json"')
-    do
-        log "Add container $c"
-        c="${c//$'\r'/}" #Remove unwanted cariage returns
-        containers+=("${c}")
-    done
+    if [ $MC_CONTROL_CONTAINERS -eq 1 ]
+    then
+        log "Containers already loaded"
+    else
+        log "Get containers"
+
+        for c in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".containers[] | keys | .[]" "/home/appuser/app/config.json"')
+        do
+            log "Add container $c"
+            c="${c//$'\r'/}" #Remove unwanted cariage returns
+            containers+=("${c}")
+        done
+
+        MC_CONTROL_CONTAINERS=1
+    fi
 
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
@@ -53,12 +62,21 @@ function config_get_users() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-    for u in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".users[] | keys | .[]" "/home/appuser/app/config.json"')
-    do
-        log "Add user $u"
-        u="${u//$'\r'/}" #Remove unwanted cariage returns
-        users+=("${u}")
-    done
+    if [ $MC_CONTROL_USERS -eq 1 ]
+    then
+        log "Users already loaded"
+    else
+        log "Get users"
+
+        for u in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".users[] | keys | .[]" "/home/appuser/app/config.json"')
+        do
+            log "Add user $u"
+            u="${u//$'\r'/}" #Remove unwanted cariage returns
+            users+=("${u}")
+        done
+
+        MC_CONTROL_USERS=1
+    fi
 
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
@@ -90,47 +108,47 @@ function config_get_userdefaultsettings() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-    MC_MAILDOMAIN=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".usersettings.MAILDOMAIN" /home/appuser/app/config.json')
-    log "Maildomain \"$MC_MAILDOMAIN\""
-    MC_DEFAULTPASSWORD=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".usersettings.DEFAULTPASSWORD" /home/appuser/app/config.json')
-    log "Defaultpassword \"$MC_DEFAULTPASSWORD\""
-    
+    if [ $MC_CONTROL_USERDEFAULTS -eq 1 ]
+    then
+        log "User default values already loaded"
+    else
+        log "Get user default values"
+
+        MC_MAILDOMAIN=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".usersettings.MAILDOMAIN" /home/appuser/app/config.json')
+        log "Maildomain \"$MC_MAILDOMAIN\""
+        MC_DEFAULTPASSWORD=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".usersettings.DEFAULTPASSWORD" /home/appuser/app/config.json')
+        log "Defaultpassword \"$MC_DEFAULTPASSWORD\""
+
+        MC_CONTROL_USERDEFAULTS=1
+    fi
+
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
-function config_get_certificate_values() {
+function config_get_certdefaultvalues() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))
 
-    log "Get certificate values"
+    if [ $MC_CONTROL_CERTDEFAULTS -eq 1 ]
+    then
+        log "Certificate default values already loaded"
+    else
+        log "Get certificate values"
 
-    MC_CRTVALIDITY=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.VALIDITY" /home/appuser/app/config.json')
-    log "Validity \"$MC_CRTVALIDITY\""
-    MC_CRTCOUNTRY=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.COUNTRY" /home/appuser/app/config.json')
-    log "Country \"$MC_CRTCOUNTRY\""
-    MC_CRTSTATE=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.STATE" /home/appuser/app/config.json')
-    log "State \"$MC_CRTSTATE\""
-    MC_CRTLOCATION=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.LOCATION" /home/appuser/app/config.json')
-    log "Location \"$MC_CRTLOCATION\""
-    MC_CRTOU=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.OU" /home/appuser/app/config.json')
-    log "OU \"$MC_CRTOU\""
-    
-    MC_LOGINDENT=$((MC_LOGINDENT-3))
-}
+        MC_CRTVALIDITY=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.VALIDITY" /home/appuser/app/config.json')
+        log "Validity \"$MC_CRTVALIDITY\""
+        MC_CRTCOUNTRY=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.COUNTRY" /home/appuser/app/config.json')
+        log "Country \"$MC_CRTCOUNTRY\""
+        MC_CRTSTATE=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.STATE" /home/appuser/app/config.json')
+        log "State \"$MC_CRTSTATE\""
+        MC_CRTLOCATION=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.LOCATION" /home/appuser/app/config.json')
+        log "Location \"$MC_CRTLOCATION\""
+        MC_CRTOU=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".certificates.OU" /home/appuser/app/config.json')
+        log "OU \"$MC_CRTOU\""
 
-function config_get_usersettings() {
+        MC_CONTROL_CERTDEFAULTS=1
+    fi
 
-    MC_LOGINDENT=$((MC_LOGINDENT+3))
-
-    log "Get user default values"
-    MC_MAILDOMAIN="defaultmail.domain"
-    MC_DEFAULTPASSWORD="defaultpassword"
-
-    MC_MAILDOMAIN=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".usersettings.MAILDOMAIN" /home/appuser/app/config.json')
-    log "Default maildomain \"$MC_MAILDOMAIN\""
-    MC_DEFAULTPASSWORD=$(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".usersettings.DEFAULTPASSWORD" /home/appuser/app/config.json')
-    log "Default password \"$MC_DEFAULTPASSWORD\""
-    
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 

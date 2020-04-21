@@ -1,30 +1,5 @@
 #!/bin/bash
 
-function docker_clean_all() {
-
-	MC_LOGINDENT=$((MC_LOGINDENT+3))
-
-	docker_clean "alpine"
-	docker_clean "build"
-	docker_clean "go"
-	docker_clean "nginx"
-	docker_clean "leberkas"
-	docker_clean "coredns"
-	docker_clean "mariadb"
-	docker_clean "mariadbvault"
-	docker_clean "vault"
-	docker_clean "gitea"
-	docker_clean "jdk11"
-	docker_clean "jre11"
-	docker_clean "jre8"
-	docker_clean "jdk8"
-	docker_clean "jenkins"
-	docker_clean "keycloak"
-	docker_clean "nexus"
-	docker system prune -f
-
-	MC_LOGINDENT=$((MC_LOGINDENT-3))
-}
 
 function docker_clean() { 
 
@@ -144,33 +119,6 @@ function docker_build() {
 		exit 1
 	fi
 
-	MC_LOGINDENT=$((MC_LOGINDENT-3))
-}
-
-function docker_start_all() {
-	MC_LOGINDENT=$((MC_LOGINDENT+3))
-	
-	log "start mariadb for vault"
-	docker_start "mariadbvault"
-	log "start vault"
-	docker_start "vault"
-	log "start mariadb"
-	docker_start "mariadb"
-	log "start nginx"
-	docker_start "nginx"
-	log "start leberkas"
-	docker_start "leberkas"
-	log "start coredns"
-	docker_start "coredns"
-	log "start gitea"
-	docker_start "gitea"
-	log "start jenkins"
-	docker_start "jenkins"
-	log "start keycloak"
-	docker_start "keycloak"
-	log "start nexus"
-	docker_start "nexus"
-	
 	MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 

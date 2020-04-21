@@ -1,5 +1,51 @@
 #!/bin/bash 
 
+function vault_initial_setup() {
+    
+    MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+    log "wait for vault availability"
+    vault_wait_for_startup
+
+    log "get the root token out of the vault docker container"
+    local root_token=$(vault_get_root_token "$MC_VAULTCONTAINER")
+    
+    log "check if vault is running and unsealed and unseal if needed"
+    vault_check_status "$root_token"
+
+    log "Create a kv_v2 secret store for the project, activate approle and userpass authentication, create admin policies"
+    vault_init "$root_token"
+
+    log "Write secrets from json to vault-server"
+    vault_add_secrets "$root_token"
+
+    MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
+
+function vault_wait_for_startup() {
+
+    MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+    log "check vault availability by searching for firststart_finished.flg"
+    cmd="ls /home/appuser/data/firststart_finished.flg"
+
+    cnt=0
+    while ! docker exec -it ${MC_PROJECT}_vault_1 sh -c "${cmd}" > /dev/null 2>&1; do
+        ((cnt++))
+        log "firststart_finished.flg not available. Wait 15s and try again ..."
+        sleep 15s
+        if [ $cnt -eq 21 ]
+        then
+            log "Failed to start vault"
+            exit 1
+        fi
+    done
+
+    log "vault setup finished."
+
+    MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
+
 function vault_get_root_token() {
 
 	local root_token=""
