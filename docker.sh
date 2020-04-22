@@ -88,10 +88,10 @@ function docker_build() {
 		folder_name="java"
 	fi
 
-	echo "Create runtime copy of Dockerfile for container image \"$container_name\""
+	log "Create runtime copy of Dockerfile for container image \"$container_name\""
 	cp -f "${MC_WORKDIR}/../docker_${folder_name}/Dockerfile-${container_name}" "${MC_WORKDIR}/../docker_${folder_name}/Dockerfile-${container_name}-runtime"
 
-	echo "Patch Dockerfile for container image \"$container_name\""
+	log "Patch Dockerfile for container image \"$container_name\""
 	sed -i -e "s/#MC_PROJECT#/${MC_PROJECT}/g" "${MC_WORKDIR}/../docker_${folder_name}/Dockerfile-${container_name}-runtime"
 	
 	if [ "${container_name}" == "build" ]
@@ -100,7 +100,7 @@ function docker_build() {
 		sed -i -e "s/#MC_CONFIGFILE#/${MC_CONFIGFILE}/g" "${MC_WORKDIR}/../docker_${folder_name}/Dockerfile-${container_name}-runtime"
 	fi
 
-	log "Use file: $file_name"
+	log "Use compose-file: $file_name"
 	if [ $MC_LOGBUILD -eq 1 ]
 	then 
 		log "docker-compose output enabled"; docker-compose -f "${file_name}" build "${container_name}"

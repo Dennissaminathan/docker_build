@@ -317,6 +317,21 @@ function magic_clean_all() {
 	docker_clean "nexus"
 	docker system prune -f
 }
+function magic_download_all() {
+
+    helper_git_download "${MC_GITURL}/docker_go" "docker_go"
+    helper_git_download "${MC_GITURL}/docker_java" "docker_java"
+    helper_git_download "${MC_GITURL}/docker_vault" "docker_vault"
+    helper_git_download "${MC_GITURL}/docker_mariadb" "docker_mariadb"
+    helper_git_download "${MC_GITURL}/docker_nginx" "docker_nginx"
+    helper_git_download "${MC_GITURL}/docker_coredns" "docker_coredns"
+    helper_git_download "${MC_GITURL}/docker_keycloak" "docker_keycloak"
+    helper_git_download "${MC_GITURL}/docker_leberkas" "docker_leberkas"
+    helper_git_download "${MC_GITURL}/docker_gitea" "docker_gitea"
+    helper_git_download "${MC_GITURL}/docker_jenkins" "docker_jenkins"
+    helper_git_download "${MC_GITURL}/docker_nexus" "docker_nexus"
+}
+
 
 function magic_reset_all() {
 
@@ -337,6 +352,13 @@ function magic_reset_all() {
 
     log "get user default settings"
     config_get_userdefaultsettings
+
+    log "Refresh all sources" 
+    # TODO: dc_file_not_found 
+    # This is just implemented, bacause docker_compose doesnt run, when not all referenced files are available and the next step (Build go) will fail, bacause ogf missing java sources.
+    # ERROR: build path C:\Users\david\Documents\dc2go_test\docker_java either does not exist, is not accessible, or is not a valid URL.
+    # Later we have to find out, if docker_compose can be configured to ignore a missing directory
+    magic_download_all
 
     log "Build go"
     magic_reset_image "go"
