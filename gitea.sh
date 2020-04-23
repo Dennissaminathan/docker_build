@@ -5,6 +5,9 @@ function gitea_initial_setup() {
     log "wait for gitea availability"
     gitea_wait_for_startup
 
+    log "add open-id-connect provider"
+    gitea_add_openid_provider
+
     log "create gitea testusers"
     gitea_create_users
 
@@ -90,11 +93,14 @@ function gitea_create_users() {
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
 
+function gitea_add_openid_provider() {
 
+    log "create OpenID Connect configuration"
+    cmd="cd /home/appuser/app
+        ./gitea -c /home/appuser/data/gitea.ini admin auth add-oauth --name gitea.${MC_PROJECT} --provider OpenIDConnect --key gitea.${MC_PROJECT} --secret 12345678-1234-abd-1234-0123456789ab --auto-discovery-url https://keycloak.dogchain.go/auth/realms/${MC_PROJECT}/.well-known/openid-configuration"
+    docker exec -it ${MC_PROJECT}_gitea_1 sh -c "${cmd}" > /dev/null 2>&1
 
-    #echo create OpenID Connect configuration
-    #./gitea -c /home/appuser/data/gitea.ini admin auth add-oauth --name gitea.dogchain2go --provider OpenIDConnect --key gitea.dogchain2go --secret 12345678-1234-abd-1234-0123456789ab --auto-discovery-url https://keycloak.dogchain.go/auth/realms/dogchain2g0/.well-known/openid-configuration
-
+}
 
 function gitea_write_user() {
 
@@ -117,4 +123,3 @@ function gitea_write_user() {
 
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
-

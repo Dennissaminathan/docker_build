@@ -11,31 +11,40 @@ services:
       dockerfile: Dockerfile-build-runtime
       context: .
     image: #project#/build:latest  
+  mariadb:
+    build: 
+      dockerfile: Dockerfile-mariadb-runtime
+      context: ./../docker_mariadb
+    image: #project#/mariadb:latest
+    hostname: mariadb
+    restart: "no"
+    dns: #corednsIPADDR#
+    volumes:
+      - mariadb-data:/home/appuser/data
+    networks:
+      appnet:
+        ipv4_address: #mariadbIPADDR#
+    healthcheck:
+      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#mariadbHEALTHPWD# -P #mariadbINTPORT#"
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - MDB_ROLEID=#mariadbROLEID#
+      - MDB_ROOTPWD=#mariadbROOTPWD#
+      - MDB_PORT=#mariadbINTPORT#
+      - MDB_ADMINUSER=#mariadbADMINUSER#
+      - MDB_BACKUPUSER=#mariadbBACKUPUSER#
+      - MDB_ADMINPWD=#mariadbADMINPWD#
+      - MDB_BACKUPPWD=#mariadbBACKUPPWD#
+      - MDB_HEALTHPWD=#mariadbHEALTHPWD#
+      - MDB_COLLATION=#mariadbCOLLATION#
+      - MDB_CHARACTERSET=#mariadbCHARACTERSET#
   go:
     build: 
       dockerfile: Dockerfile-go-runtime
       context: ./../docker_go
     image: #project#/go:latest
-  jre8:
-    build: 
-      dockerfile: Dockerfile-jre8-runtime
-      context: ./../docker_java
-    image: #project#/jre8:latest
-  jdk8:
-    build: 
-      dockerfile: Dockerfile-jdk8-runtime
-      context: ./../docker_java
-    image: #project#/jdk8:latest
-  jre11:
-    build: 
-      dockerfile: Dockerfile-jre11-runtime
-      context: ./../docker_java
-    image: #project#/jre11:latest
-  jdk11:
-    build: 
-      dockerfile: Dockerfile-jdk11-runtime
-      context: ./../docker_java
-    image: #project#/jdk11:latest
   vault:
     build: 
       dockerfile: Dockerfile-vault-runtime
@@ -76,38 +85,26 @@ services:
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
       - CRT_CN=#vaultCRTCOMMONNAME#
-  coredns:
+  jre8:
     build: 
-      dockerfile: Dockerfile-coredns-runtime
-      context: ./../docker_coredns
-    image: #project#/coredns:latest
-    hostname: coredns
-    restart: "no"
-    dns: #corednsIPADDR#
-    volumes:
-      - coredns-data:/home/appuser/data
-    networks:
-      appnet:
-        ipv4_address: #corednsIPADDR#
-    healthcheck:
-      test: ["CMD", "dig", "#corednsDIGADDRESS#"]
-      interval: 5s
-      timeout: 10s
-      retries: 3
-    environment:
-      - DNS_ROLEID=#corednsROLEID#
-      - DNS_INITDOMAIN=#corednsINITDOMAIN#
-      - DNS_IPADDR=#corednsIPADDR#
-      - VLT_IPADDR=#vaultIPADDR#
-      - NGX_IPADDR=#nginxIPADDR#
-      - LBK_IPADDR=#leberkasIPADDR#
-      - MDB_IPADDR=#mariadbIPADDR#
-      - DBV_IPADDR=#mariadbIPADDR#
-      - GT_IPADDR=#giteaIPADDR#
-      - JKS_IPADDR=#jenkinsIPADDR#
-      - KC_IPADDR=#keycloakIPADDR#
-      - NXS_IPADDR=#nexusIPADDR#
-      - DCR_IPADDR=#nexusIPADDR#
+      dockerfile: Dockerfile-jre8-runtime
+      context: ./../docker_java
+    image: #project#/jre8:latest
+  jre11:
+    build: 
+      dockerfile: Dockerfile-jre11-runtime
+      context: ./../docker_java
+    image: #project#/jre11:latest
+  jdk8:
+    build: 
+      dockerfile: Dockerfile-jdk8-runtime
+      context: ./../docker_java
+    image: #project#/jdk8:latest
+  jdk11:
+    build: 
+      dockerfile: Dockerfile-jdk11-runtime
+      context: ./../docker_java
+    image: #project#/jdk11:latest
   nginx:
     build: 
       dockerfile: Dockerfile-nginx-runtime
@@ -147,6 +144,87 @@ services:
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
       - CRT_CN=#nginxCRTCOMMONNAME#
+  coredns:
+    build: 
+      dockerfile: Dockerfile-coredns-runtime
+      context: ./../docker_coredns
+    image: #project#/coredns:latest
+    hostname: coredns
+    restart: "no"
+    dns: #corednsIPADDR#
+    volumes:
+      - coredns-data:/home/appuser/data
+    networks:
+      appnet:
+        ipv4_address: #corednsIPADDR#
+    healthcheck:
+      test: ["CMD", "dig", "#corednsDIGADDRESS#"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - DNS_ROLEID=#corednsROLEID#
+      - DNS_INITDOMAIN=#corednsINITDOMAIN#
+      - DNS_IPADDR=#corednsIPADDR#
+      - VLT_IPADDR=#vaultIPADDR#
+      - NGX_IPADDR=#nginxIPADDR#
+      - LBK_IPADDR=#leberkasIPADDR#
+      - MDB_IPADDR=#mariadbIPADDR#
+      - DBV_IPADDR=#mariadbIPADDR#
+      - GT_IPADDR=#giteaIPADDR#
+      - JKS_IPADDR=#jenkinsIPADDR#
+      - KC_IPADDR=#keycloakIPADDR#
+      - NXS_IPADDR=#nexusIPADDR#
+      - DCR_IPADDR=#nexusIPADDR#
+  keycloak:
+    build: 
+      dockerfile: Dockerfile-keycloak-runtime
+      context: ./../docker_keycloak
+    image: #project#/keycloak:latest
+    hostname: keycloak
+    restart: "no"
+    dns: #corednsIPADDR#
+    volumes:
+      - keycloak-data:/home/appuser/data
+    networks:
+      appnet:
+        ipv4_address: #keycloakIPADDR#
+    healthcheck:
+      test: "curl --fail https://#keycloakIPADDR#:#keycloakHTTPSINTPORT# --insecure || false"
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - KC_ROLEID=#keycloakROLEID#
+      - KC_AJPINTPORT=#keycloakAJPINTPORT#
+      - KC_HTTPINTPORT=#keycloakHTTPINTPORT#
+      - KC_HTTPSINTPORT=#keycloakHTTPSINTPORT#
+      - KC_MGNTHTTPINTPORT=#keycloakMGNTHTTPINTPORT#
+      - KC_MGNTHTTPSINTPORT=#keycloakMGNTHTTPSINTPORT#
+      - KC_MYSQLADMINUSER=#keycloakMYSQLADMINUSER#
+      - KC_MYSQLADMINPASSWORD=#keycloakMYSQLADMINPASSWORD#
+      - KC_MYSQLHOST=#keycloakMYSQLHOST#
+      - KC_MYSQLPORT=#keycloakMYSQLPORT#
+      - KC_MYSQLDB=#keycloakMYSQLDB#
+      - KC_MYSQLUSERNAME=#keycloakMYSQLUSERNAME#
+      - KC_MYSQLPASSWORD=#keycloakMYSQLPASSWORD#
+      - KC_MYSQLHEALTHUSER=#keycloakMYSQLHEALTHUSER#
+      - KC_MYSQLHEALTHPWD=#keycloakMYSQLHEALTHPWD#
+      - KC_BINDADDRESS=#keycloakIPADDR#
+      - KC_REMOVE_DB=#keycloakREMOVE_DB#
+      - KC_CERTPWD=#keycloakCERTPWD#
+      - KC_ADMINUSER=#keycloakADMINUSER#
+      - KC_ADMINPWD=#keycloakADMINPWD#
+      - KC_CREATEINITREALM=#keycloakCREATEINITREALM#
+      - KC_INITREALM=#keycloakINITREALM#
+      - KC_INITUSERMAILDOMAIN=#keycloakINITUSERMAILDOMAIN#
+      - KC_INITUSERPASSWORD=#keycloakINITUSERPASSWORD#
+      - CRT_VALIDITY=#certificatesVALIDITY#
+      - CRT_C=#certificatesCOUNTRY#
+      - CRT_S=#certificatesSTATE#
+      - CRT_L=#certificatesLOCATION#
+      - CRT_OU=#certificatesOU#
+      - CRT_CN=#keycloakCRTCOMMONNAME#
   leberkas:
     build:
       dockerfile: Dockerfile-leberkas-runtime
@@ -160,7 +238,7 @@ services:
       appnet:
         ipv4_address: #leberkasIPADDR#
     environment:
-      - NGX_ROLEID=#leberkasROLEID#
+      - LBK_ROLEID=#leberkasROLEID#
       - LBK_PORT=#leberkasINTPORT#
       - DNS_IPADDR=#corednsIPADDR#
       - DNS_INITDOMAIN=#corednsINITDOMAIN#
@@ -170,36 +248,21 @@ services:
       - CRT_S=#certificatesSTATE#
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
-      - CRT_CN=#nginxCRTCOMMONNAME#
-  mariadb:
-    build: 
-      dockerfile: Dockerfile-mariadb-runtime
-      context: ./../docker_mariadb
-    image: #project#/mariadb:latest
-    hostname: mariadb
-    restart: "no"
+      - CRT_CN=#certificatesCRTCOMMONNAME#
+  obazda:
+    build:
+      dockerfile: Dockerfile-obazda-runtime
+      context: ./../docker_obazda
+    image: #project#/leberkas:latest
+    hostname: obazda
     dns: #corednsIPADDR#
     volumes:
-      - mariadb-data:/home/appuser/data
+      - obazda-data:/home/appuser/data
     networks:
       appnet:
-        ipv4_address: #mariadbIPADDR#
-    healthcheck:
-      test: "mysqladmin status -h 127.0.0.1 -u healthstatus -p#mariadbHEALTHPWD# -P #mariadbINTPORT#"
-      interval: 5s
-      timeout: 10s
-      retries: 3
+        ipv4_address: #obazdaIPADDR#
     environment:
-      - MDB_ROLEID=#mariadbROLEID#
-      - MDB_ROOTPWD=#mariadbROOTPWD#
-      - MDB_PORT=#mariadbINTPORT#
-      - MDB_ADMINUSER=#mariadbADMINUSER#
-      - MDB_BACKUPUSER=#mariadbBACKUPUSER#
-      - MDB_ADMINPWD=#mariadbADMINPWD#
-      - MDB_BACKUPPWD=#mariadbBACKUPPWD#
-      - MDB_HEALTHPWD=#mariadbHEALTHPWD#
-      - MDB_COLLATION=#mariadbCOLLATION#
-      - MDB_CHARACTERSET=#mariadbCHARACTERSET#
+      - OB_ROLEID=#obazdaROLEID#
   gitea:
     build: 
       dockerfile: Dockerfile-gitea-runtime
@@ -283,55 +346,6 @@ services:
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
       - CRT_CN=#jenkinsCRTCOMMONNAME#
-  keycloak:
-    build: 
-      dockerfile: Dockerfile-keycloak-runtime
-      context: ./../docker_keycloak
-    image: #project#/keycloak:latest
-    hostname: keycloak
-    restart: "no"
-    dns: #corednsIPADDR#
-    volumes:
-      - keycloak-data:/home/appuser/data
-    networks:
-      appnet:
-        ipv4_address: #keycloakIPADDR#
-    healthcheck:
-      test: "curl --fail https://#keycloakIPADDR#:#keycloakHTTPSINTPORT# --insecure || false"
-      interval: 5s
-      timeout: 10s
-      retries: 3
-    environment:
-      - KC_ROLEID=#keycloakROLEID#
-      - KC_AJPINTPORT=#keycloakAJPINTPORT#
-      - KC_HTTPINTPORT=#keycloakHTTPINTPORT#
-      - KC_HTTPSINTPORT=#keycloakHTTPSINTPORT#
-      - KC_MGNTHTTPINTPORT=#keycloakMGNTHTTPINTPORT#
-      - KC_MGNTHTTPSINTPORT=#keycloakMGNTHTTPSINTPORT#
-      - KC_MYSQLADMINUSER=#keycloakMYSQLADMINUSER#
-      - KC_MYSQLADMINPASSWORD=#keycloakMYSQLADMINPASSWORD#
-      - KC_MYSQLHOST=#keycloakMYSQLHOST#
-      - KC_MYSQLPORT=#keycloakMYSQLPORT#
-      - KC_MYSQLDB=#keycloakMYSQLDB#
-      - KC_MYSQLUSERNAME=#keycloakMYSQLUSERNAME#
-      - KC_MYSQLPASSWORD=#keycloakMYSQLPASSWORD#
-      - KC_MYSQLHEALTHUSER=#keycloakMYSQLHEALTHUSER#
-      - KC_MYSQLHEALTHPWD=#keycloakMYSQLHEALTHPWD#
-      - KC_BINDADDRESS=#keycloakIPADDR#
-      - KC_REMOVE_DB=#keycloakREMOVE_DB#
-      - KC_CERTPWD=#keycloakCERTPWD#
-      - KC_ADMINUSER=#keycloakADMINUSER#
-      - KC_ADMINPWD=#keycloakADMINPWD#
-      - KC_CREATEINITREALM=#keycloakCREATEINITREALM#
-      - KC_INITREALM=#keycloakINITREALM#
-      - KC_INITUSERMAILDOMAIN=#keycloakINITUSERMAILDOMAIN#
-      - KC_INITUSERPASSWORD=#keycloakINITUSERPASSWORD#
-      - CRT_VALIDITY=#certificatesVALIDITY#
-      - CRT_C=#certificatesCOUNTRY#
-      - CRT_S=#certificatesSTATE#
-      - CRT_L=#certificatesLOCATION#
-      - CRT_OU=#certificatesOU#
-      - CRT_CN=#keycloakCRTCOMMONNAME#
   nexus:
     build: 
       dockerfile: Dockerfile-nexus-runtime
@@ -366,12 +380,16 @@ networks:
       config:
         - subnet: "172.6.66.0/24"
 volumes:
-  vault-data:
-  coredns-data:
-  nginx-data:
-  leberkas-data:
   mariadb-data:
+  vault-data:
+  nginx-data:
+  coredns-data:
+  keycloak-data:
+  leberkas-data:
+  obazda-data:
   gitea-data:
   jenkins-data:
-  keycloak-data:
   nexus-data:
+  
+  
+  

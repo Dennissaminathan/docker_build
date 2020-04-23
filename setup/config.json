@@ -12,9 +12,9 @@
     },
     "containers":[
         {
-            "mariadbvault": {
-                "ROLEID":"mdbvaultroleid",
-                "INTPORT":"30102",
+            "mariadb": {
+                "ROLEID":"mdbroleid",
+                "INTPORT":"30103",
                 "ROOTPWD":"dogchain2go",
                 "ADMINUSER":"adminmdb",
                 "BACKUPUSER":"backupmdb",
@@ -23,7 +23,7 @@
                 "HEALTHPWD":"dogchain2go",
                 "COLLATION":"utf8_unicode_ci",
                 "CHARACTERSET":"utf8",
-                "IPADDR":"172.6.66.102"
+                "IPADDR":"172.6.66.103"
             },
             "vault": {
                 "ROLEID":"vaultroleid",
@@ -42,13 +42,6 @@
                 "CRTCOMMONNAME":"VAULT.DOGCHAIN.GO",
                 "IPADDR":"172.6.66.105"
             },
-            "coredns": {
-                "ROLEID":"corednsroleid",
-                "INTPORT":"53",
-                "INITDOMAIN":"dogchain.go",
-                "DIGADDRESS":"dogchain.go",
-                "IPADDR":"172.6.66.100"
-            },
             "nginx": {
                 "ROLEID":"nginxroleid",
                 "EXTPORT":"443",
@@ -56,24 +49,51 @@
                 "CRTCOMMONNAME":"NGINX.DOGCHAIN.GO",
                 "IPADDR":"172.6.66.104"
             },
+            "coredns": {
+                "ROLEID":"corednsroleid",
+                "INTPORT":"53",
+                "INITDOMAIN":"dogchain.go",
+                "DIGADDRESS":"dogchain.go",
+                "IPADDR":"172.6.66.100"
+            },
+            "keycloak": {
+                "ROLEID":"keycloakroleid",
+                "AJPINTPORT":"30108",
+                "HTTPINTPORT":"30109",
+                "HTTPSINTPORT":"30110",
+                "MGNTHTTPINTPORT":"30111",
+                "MGNTHTTPSINTPORT":"30112",
+                "MYSQLADMINUSER":"adminmdb",
+                "MYSQLADMINPASSWORD":"dogchain2go",
+                "MYSQLHOST":"mariadb.dogchain.go",
+                "MYSQLPORT":"30103",
+                "MYSQLDB":"keycloak",
+                "MYSQLUSERNAME":"keycloak",
+                "MYSQLPASSWORD":"keycloak2go",
+                "MYSQLHEALTHUSER":"healthstatus",
+                "MYSQLHEALTHPWD":"dogchain2go",
+                "REMOVE_DB":"true",
+                "CRTCOMMONNAME":"KEYCLOAK.DOGCHAIN.GO",
+                "IPADDR":"172.6.66.108",
+                "CERTPWD":"dogchain2go",
+                "ADMINUSER":"fallbackadmin",
+                "ADMINPWD":"dogchain2go",
+                "CREATEINITREALM":"true",
+                "INITREALM":"dogchain2go",
+                "INITUSERMAILDOMAIN":"dogchain.go",
+                "INITUSERPASSWORD":"dogchain2go"
+            },
             "leberkas": {
                 "ROLEID":"leberkasroleid",
                 "INTPORT":"30113",
                 "CRTCOMMONNAME":"LEBERKAS.DOGCHAIN.GO",
                 "IPADDR":"172.6.66.113"
             },
-            "mariadb": {
-                "ROLEID":"mdbroleid",
-                "INTPORT":"30103",
-                "ROOTPWD":"dogchain2go",
-                "ADMINUSER":"adminmdb",
-                "BACKUPUSER":"backupmdb",
-                "ADMINPWD":"dogchain2go",
-                "BACKUPPWD":"dogchain2go",
-                "HEALTHPWD":"dogchain2go",
-                "COLLATION":"utf8_unicode_ci",
-                "CHARACTERSET":"utf8",
-                "IPADDR":"172.6.66.103"
+            "obazda": {
+                "ROLEID":"obazdaroleid",
+                "INTPORT":"30113",
+                "CRTCOMMONNAME":"OBAZDA.DOGCHAIN.GO",
+                "IPADDR":"172.6.66.114"
             },
             "gitea": {
                 "ROLEID":"gitearoleid",
@@ -112,33 +132,6 @@
                 "SLAVEPORT":"50000",
                 "CRTCOMMONNAME":"JENKINS.DOGCHAIN.GO",
                 "IPADDR":"172.6.66.107"
-            },
-            "keycloak": {
-                "ROLEID":"keycloakroleid",
-                "AJPINTPORT":"30108",
-                "HTTPINTPORT":"30109",
-                "HTTPSINTPORT":"30110",
-                "MGNTHTTPINTPORT":"30111",
-                "MGNTHTTPSINTPORT":"30112",
-                "MYSQLADMINUSER":"adminmdb",
-                "MYSQLADMINPASSWORD":"dogchain2go",
-                "MYSQLHOST":"mariadb.dogchain.go",
-                "MYSQLPORT":"30103",
-                "MYSQLDB":"keycloak",
-                "MYSQLUSERNAME":"keycloak",
-                "MYSQLPASSWORD":"keycloak2go",
-                "MYSQLHEALTHUSER":"healthstatus",
-                "MYSQLHEALTHPWD":"dogchain2go",
-                "REMOVE_DB":"true",
-                "CRTCOMMONNAME":"KEYCLOAK.DOGCHAIN.GO",
-                "IPADDR":"172.6.66.108",
-                "CERTPWD":"dogchain2go",
-                "ADMINUSER":"fallbackadmin",
-                "ADMINPWD":"dogchain2go",
-                "CREATEINITREALM":"true",
-                "INITREALM":"dogchain2go",
-                "INITUSERMAILDOMAIN":"dogchain.go",
-                "INITUSERPASSWORD":"dogchain2go"
             },
             "nexus": {
                 "ROLEID":"nexusroleid",
@@ -332,6 +325,26 @@
                 "MAILUSERNAME":"${USERNAME}",
                 "MAILDOMAIN":"${MAILDOMAIN}",
                 "PASSWORD":"${DEFAULTPASSWORD}"
+            }
+        }
+    ],
+    "groups":[
+        {
+            "${MC_PROJECT}-Administrators":{
+                "DESCRIPTION":"Members of this group will get access to any application",
+                "USERS":"aattkinson#bburn"
+            },
+            "${MC_PROJECT}-Reviewer":{
+                "description":"Members of this group will get write access to any central git repo",
+                "users":"cchoi#ddarling"
+            },
+            "${MC_PROJECT}-Developer":{
+                "description":"Members of this group will get read access to any central git repo",
+                "users":"eestrada#ffrancis"
+            },
+            "${MC_PROJECT}-BuildManager":{
+                "description":"Members of this group will get write access to any central jenkins folder",
+                "users":"ggrundy#hhu"
             }
         }
     ]

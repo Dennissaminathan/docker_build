@@ -1,0 +1,17 @@
+alpine*
+build*
+mariadb
+go*
+vault
+jre8*
+jre11*
+jdk8*
+jdk11*
+nginx
+coredns
+keycloak
+leberkas
+obazda
+gitea
+jenkins
+nexus

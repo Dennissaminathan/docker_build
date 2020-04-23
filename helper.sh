@@ -47,6 +47,7 @@ function helper_set_variables() {
 
     # Control variables used by several functions. Do not touch
     MC_CONTROL_USERS=0
+    MC_CONTROL_GROUPS=0
     MC_CONTROL_USERDEFAULTS=0
     MC_CONTROL_CONTAINERS=0
     MC_CONTROL_CERTDEFAULTS=0
@@ -146,16 +147,17 @@ function helper_git_download() {
 
     if [ $MC_NOUPDATE -eq 0 ]
     then
-        log "Get files from ${giturl}"
+        log "Get files from \"${giturl}\""
+        log "Target directory is \"${gittarget}\""
         if [ -d "${MC_WORKDIR}/../${gittarget}/.git" ]
         then
-            log "Target directory already exist. Doing pull."
+            log "Target directory already exist. Change context."
             pushd "${MC_WORKDIR}/../${gittarget}"
 
             git pull $giturl master > /dev/null 2>&1
             if [ $? -eq 0 ]
             then 
-                log "git pull successful"
+                log "git pull successfull"
                 popd
             else
                 log "git pull failed"

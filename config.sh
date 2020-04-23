@@ -104,6 +104,52 @@ function config_get_user_values() {
     echo ${ret}
 }
 
+function config_get_groups() {
+
+    MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+    if [ $MC_CONTROL_GROUPS -eq 1 ]
+    then
+        log "Groups already loaded"
+    else
+        log "Get groups"
+
+        for g in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".groups[] | keys | .[]" "/home/appuser/app/config.json"')
+        do
+            log "Add group $g"
+            g="${g//$'\r'/}" #Remove unwanted cariage returns
+            groups+=("${g}")
+        done
+
+        MC_CONTROL_USERS=1
+    fi
+
+    MC_LOGINDENT=$((MC_LOGINDENT-3))
+}
+
+function config_get_group_values() {
+    
+    local group_name=$1
+    local ret=
+
+    MC_LOGINDENT=$((MC_LOGINDENT+3))
+
+    log "Get configuration values for groups \"$group_name\""
+
+    local cnt=0
+    for g in $(docker run --name magicbuild --rm -i ${MC_PROJECT}/build sh -c 'jq -r ".groups[].'${group_name}' | to_entries | map(\"\(.key)=\(.value|tostring)\") | .[]" /home/appuser/app/config.json')
+    do
+        if [ $cnt -gt 0 ]; then ret+=";"; fi
+        g="${g//$'\r'/}" #Remove unwanted cariage returns
+        ret+=${g}
+        ((cnt++))
+    done
+    log "Found ${cnt} values"
+    MC_LOGINDENT=$((MC_LOGINDENT-3))
+
+    echo ${ret}
+}
+
 function config_get_userdefaultsettings() {
 
     MC_LOGINDENT=$((MC_LOGINDENT+3))

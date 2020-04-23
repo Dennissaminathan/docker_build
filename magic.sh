@@ -3,6 +3,7 @@
 MC_WORKDIR=$(dirname "$(readlink -f "$0")")
 declare -a containers
 declare -a users
+declare -a groups
 
 source $MC_WORKDIR/helper.sh
 source $MC_WORKDIR/docker.sh
@@ -10,6 +11,7 @@ source $MC_WORKDIR/vault.sh
 source $MC_WORKDIR/config.sh
 source $MC_WORKDIR/keycloak.sh
 source $MC_WORKDIR/gitea.sh
+source $MC_WORKDIR/obazda.sh
 
 function magic_main() {
 
@@ -59,6 +61,8 @@ function magic_start_all() {
 	docker_start "keycloak"
 	log "start leberkas"
 	docker_start "leberkas"
+    log "start obazda"
+	docker_start "obazda"
 	log "start gitea"
 	docker_start "gitea"
 	log "start jenkins"
@@ -79,6 +83,18 @@ function magic_reset_image() {
             log "Reset the image"
             magic_reset_image_helper $docker_image
             ;;
+        build)
+            log "Reset the image"
+            magic_reset_image_helper $docker_image
+            ;;
+        mariadb)
+            log "Reset the image"
+            magic_reset_image_helper $docker_image
+            ;;
+        go)
+            log "Reset the image"
+            magic_reset_image_helper $docker_image
+            ;;
         vault)
             log "Get certificate default values from the configuration file"
             config_get_certdefaultvalues
@@ -88,18 +104,6 @@ function magic_reset_image() {
 
             log "Setup vault initially"
             vault_initial_setup
-            ;;
-        mariadb)
-            log "Reset the image"
-            magic_reset_image_helper $docker_image
-            ;;
-        mariadbvault)
-            log "Reset the image"
-            magic_reset_image_helper $docker_image
-            ;;
-        go)
-            log "Reset the image"
-            magic_reset_image_helper $docker_image
             ;;
         jre8)
             log "Reset the image"
@@ -117,18 +121,7 @@ function magic_reset_image() {
             log "Reset the image"
             magic_reset_image_helper $docker_image
             ;;
-        build)
-            log "Reset the image"
-            magic_reset_image_helper $docker_image
-            ;;
         nginx)
-            log "Get certificate default values from the configuration file"
-            config_get_certdefaultvalues
-
-            log "Reset the image"
-            magic_reset_image_helper $docker_image
-            ;;
-        leberkas)
             log "Get certificate default values from the configuration file"
             config_get_certdefaultvalues
 
@@ -138,6 +131,48 @@ function magic_reset_image() {
         coredns)
             log "Reset the image"
             magic_reset_image_helper $docker_image
+            ;;
+        keycloak)
+            log "Get certificate default values from the configuration file"
+            config_get_certdefaultvalues
+
+            log "Get user default values from the configuration file"
+            config_get_userdefaultsettings
+
+            log "Reset the image"
+            magic_reset_image_helper $docker_image
+
+            log "get the list of users from the configuration file"
+            config_get_users
+
+            log "Setup keycloak initally"
+            keycloak_initial_setup
+            ;;
+        leberkas)
+            log "Get certificate default values from the configuration file"
+            config_get_certdefaultvalues
+
+            log "Reset the image"
+            magic_reset_image_helper $docker_image
+            ;;
+        obazda)
+            log "Get certificate default values from the configuration file"
+            config_get_certdefaultvalues
+
+            log "Get user default values from the configuration file"
+            config_get_userdefaultsettings
+
+            log "Reset the image"
+            magic_reset_image_helper $docker_image
+
+            log "get the list of users from the configuration file"
+            config_get_users
+
+            log "get the list of groups from the configuration file"
+            config_get_groups
+
+            log "Setup obazda initally"
+            obazda_initial_setup
             ;;
         gitea)
             log "Get certificate default values from the configuration file"
@@ -161,22 +196,6 @@ function magic_reset_image() {
 
             log "Reset the image"
             magic_reset_image_helper $docker_image
-            ;;
-        keycloak)
-            log "Get certificate default values from the configuration file"
-            config_get_certdefaultvalues
-
-            log "Get user default values from the configuration file"
-            config_get_userdefaultsettings
-
-            log "Reset the image"
-            magic_reset_image_helper $docker_image
-
-            log "get the list of users from the configuration file"
-            config_get_users
-
-            log "Setup keycloak initally"
-            keycloak_initial_setup
             ;;
         nexus)
             log "Get certificate default values from the configuration file"
@@ -231,16 +250,16 @@ function magic_start_image() {
         alpine)
             magic_start_image_helper $docker_image
             ;;
-        vault)
+        build)
             magic_start_image_helper $docker_image
             ;;
         mariadb)
             magic_start_image_helper $docker_image
             ;;
-        mariadbvault)
+        go)
             magic_start_image_helper $docker_image
             ;;
-        go)
+        vault)
             magic_start_image_helper $docker_image
             ;;
         jre8)
@@ -255,22 +274,25 @@ function magic_start_image() {
         jdk11)
             magic_start_image_helper $docker_image
             ;;
-        build)
-            magic_start_image_helper $docker_image
-            ;;
         nginx)
             magic_start_image_helper $docker_image
             ;;
         coredns)
             magic_start_image_helper $docker_image
             ;;
+        keycloak)
+            magic_start_image_helper $docker_image
+            ;;
+        leberkas)
+            magic_start_image_helper $docker_image
+            ;;
+        obazda)
+            magic_start_image_helper $docker_image
+            ;;
         gitea)
             magic_start_image_helper $docker_image
             ;;
         jenkins)
-            magic_start_image_helper $docker_image
-            ;;
-        keycloak)
             magic_start_image_helper $docker_image
             ;;
         nexus)
@@ -300,38 +322,41 @@ function magic_clean_all() {
 
     docker_clean "alpine"
 	docker_clean "build"
+    docker_clean "mariadb"
 	docker_clean "go"
-	docker_clean "nginx"
-	docker_clean "leberkas"
-	docker_clean "coredns"
-	docker_clean "mariadb"
-	docker_clean "mariadbvault"
-	docker_clean "vault"
-	docker_clean "gitea"
+    docker_clean "vault"
+    docker_clean "jre8"
+    docker_clean "jre11"
+    docker_clean "jdk8"
 	docker_clean "jdk11"
-	docker_clean "jre11"
-	docker_clean "jre8"
-	docker_clean "jdk8"
-	docker_clean "jenkins"
+	docker_clean "nginx"
+	docker_clean "coredns"
 	docker_clean "keycloak"
+	docker_clean "leberkas"
+    docker_clean "obazda"
+	docker_clean "gitea"
+	docker_clean "jenkins"
 	docker_clean "nexus"
 	docker system prune -f
 }
+
 function magic_download_all() {
 
-    helper_git_download "${MC_GITURL}/docker_go" "docker_go"
-    helper_git_download "${MC_GITURL}/docker_java" "docker_java"
-    helper_git_download "${MC_GITURL}/docker_vault" "docker_vault"
+    helper_git_download "${MC_GITURL}/docker_alpine" "docker_alpine"
+    helper_git_download "${MC_GITURL}/docker_build" "docker_build"
     helper_git_download "${MC_GITURL}/docker_mariadb" "docker_mariadb"
+    helper_git_download "${MC_GITURL}/docker_go" "docker_go"
+    helper_git_download "${MC_GITURL}/docker_vault" "docker_vault"
+    helper_git_download "${MC_GITURL}/docker_java" "docker_java"
     helper_git_download "${MC_GITURL}/docker_nginx" "docker_nginx"
     helper_git_download "${MC_GITURL}/docker_coredns" "docker_coredns"
     helper_git_download "${MC_GITURL}/docker_keycloak" "docker_keycloak"
     helper_git_download "${MC_GITURL}/docker_leberkas" "docker_leberkas"
+    helper_git_download "${MC_GITURL}/docker_obazda" "docker_obazda"
     helper_git_download "${MC_GITURL}/docker_gitea" "docker_gitea"
     helper_git_download "${MC_GITURL}/docker_jenkins" "docker_jenkins"
     helper_git_download "${MC_GITURL}/docker_nexus" "docker_nexus"
 }
-
 
 function magic_reset_all() {
 
@@ -357,27 +382,28 @@ function magic_reset_all() {
     # TODO: dc_file_not_found 
     # This is just implemented, bacause docker_compose doesnt run, when not all referenced files are available and the next step (Build go) will fail, bacause ogf missing java sources.
     # ERROR: build path C:\Users\david\Documents\dc2go_test\docker_java either does not exist, is not accessible, or is not a valid URL.
-    # Later we have to find out, if docker_compose can be configured to ignore a missing directory
+    # Later we have to find out, if docker_compose can be configured to ignore a missing directory or we have to split the compose file
     magic_download_all
+
+    log "Build mariadb"
+    magic_reset_image "mariadb"
 
     log "Build go"
     magic_reset_image "go"
     
-    log "Build mariadb"
-    magic_reset_image "mariadb"
-
     log "Build vault"
     magic_reset_image "vault"
 
     log "build all other images"
-    magic_reset_image "jdk8"
     magic_reset_image "jre8"
-    magic_reset_image "jdk11"
     magic_reset_image "jre11"
+    magic_reset_image "jdk8"
+    magic_reset_image "jdk11"
     magic_reset_image "nginx"
     magic_reset_image "coredns"
     magic_reset_image "keycloak"
     magic_reset_image "leberkas"
+    #magic_reset_image "obazda"
     magic_reset_image "gitea"
     magic_reset_image "jenkins"
     magic_reset_image "nexus"
