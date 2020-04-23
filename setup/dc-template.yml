@@ -242,13 +242,12 @@ services:
       - LBK_PORT=#leberkasINTPORT#
       - DNS_IPADDR=#corednsIPADDR#
       - DNS_INITDOMAIN=#corednsINITDOMAIN#
-      - NXS_DOCKERPORT=#nexusDOCKERPORT#
       - CRT_VALIDITY=#certificatesVALIDITY#
       - CRT_C=#certificatesCOUNTRY#
       - CRT_S=#certificatesSTATE#
       - CRT_L=#certificatesLOCATION#
       - CRT_OU=#certificatesOU#
-      - CRT_CN=#certificatesCRTCOMMONNAME#
+      - CRT_CN=#leberkasCRTCOMMONNAME#
   obazda:
     build:
       dockerfile: Dockerfile-obazda-runtime
