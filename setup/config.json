@@ -330,19 +330,19 @@
     ],
     "groups":[
         {
-            "${MC_PROJECT}-Administrators":{
+            "${MC_PROJECT}.Intern.Administrators":{
                 "DESCRIPTION":"Members of this group will get access to any application",
                 "USERS":"aattkinson#bburn"
             },
-            "${MC_PROJECT}-Reviewer":{
+            "${MC_PROJECT}.Intern.Reviewer":{
                 "description":"Members of this group will get write access to any central git repo",
                 "users":"cchoi#ddarling"
             },
-            "${MC_PROJECT}-Developer":{
+            "${MC_PROJECT}.Intern.Developer":{
                 "description":"Members of this group will get read access to any central git repo",
                 "users":"eestrada#ffrancis"
             },
-            "${MC_PROJECT}-BuildManager":{
+            "${MC_PROJECT}.Intern.BuildManager":{
                 "description":"Members of this group will get write access to any central jenkins folder",
                 "users":"ggrundy#hhu"
             }
