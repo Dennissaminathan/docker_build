@@ -206,6 +206,9 @@ function magic_reset_image() {
 
             log "Reset the image"
             magic_reset_image_helper $docker_image
+
+	    log "Setup nexus initially"
+            nexus_initial_setup
             ;;
         *) # Handles all unknown parameter 
             log "   Ignoring unsupported docker image \"$docker_image\""
