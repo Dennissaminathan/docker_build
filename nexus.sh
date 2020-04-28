@@ -197,11 +197,11 @@ EOF
     #docker cp ~/cnu.json ${MC_PROJECT}_nexus_1:/home/appuser/app/cnu.json
 
     log "Curl user json to nexus for execution"     
-    #cmd="curl -X POST -u admin:${NX_CERTPASS} "https://localhost:${INTPORT}/service/rest/beta/security/users" -H "accept: application/json" -H "Content-Type: application/json" -d @cnu.json –insecure"
+    #cmd="curl -X POST -u admin:$NEXUS_NEW_PWD "$NEXUS_URL/service/rest/beta/security/users" -H "accept: application/json" -H "Content-Type: application/json" -d @cnu.json –insecure"
     
     #docker exec -it ${MC_PROJECT}_nexus_1 sh -c "${cmd}" > /dev/null 2>&1
     
-    #cmd_exec="curl -v -u admin:${NX_ADMINPASS} 'https://localhost:${INTPORT}/service/rest/beta/security/users' –insecure
+    #cmd_exec="curl -v -u admin:$NEXUS_NEW_PWD '$NEXUS_URL/service/rest/beta/security/users' –insecure
     #docker exec -it ${MC_PROJECT}_nexus_1 sh -c "${cmd_exec}" > /dev/null 2>&1
     MC_LOGINDENT=$((MC_LOGINDENT-3))
 }
